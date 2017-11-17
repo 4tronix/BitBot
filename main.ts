@@ -85,6 +85,7 @@ namespace bitbot {
         if (!forward) {
             //realSpeed = 1023 - realSpeed;
 		realSpeed = 400;
+		basic.showNumber(400);
         }
 
         if ((motor == BBMotor.Left) || (motor == BBMotor.All)) {
