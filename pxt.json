@@ -1,0 +1,20 @@
+{
+    "name": "bitbot",
+    "version": "0.4.1",
+    "description": "A BitBot package for pxt-microbit",
+    "license": "Apache",
+    "dependencies": {
+        "core": "*",
+        "neopixel": "github:microsoft/pxt-neopixel#v0.3.4"
+    },
+    "files": [
+        "README.md",
+        "main.ts",
+        "_locales/no/bitbot-strings.json"
+    ],
+    "testFiles": [
+        "tests.ts"
+    ],
+    "yotta": {},
+    "public": true
+}
