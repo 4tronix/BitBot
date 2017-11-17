@@ -77,9 +77,9 @@ namespace bitbot {
 
         if (speed > 1023) {
             speed = 1023;
-        } else if (speed < -1023) {
-            speed = 1023;
-        }
+        } //else if (speed < -1023) {
+          //  speed = 1023;
+        //}
 
         let realSpeed = speed;
         if (!forward) {
