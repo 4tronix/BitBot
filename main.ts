@@ -84,7 +84,7 @@ namespace bitbot {
         let realSpeed = speed;
         if (!forward) {
            if (realSpeed >= -200)
-               realSpeed = realSpeed * 5;
+               realSpeed = (realSpeed * 19)/6;
            else if (realSpeed >= -400)
                realSpeed = realSpeed * 2;
            else if (realSpeed >= -600)
