@@ -86,11 +86,11 @@ namespace bitbot {
            if (realSpeed > -200)
                realSpeed = realSpeed * 5;
            else if (realSpeed > -400)
-               realSpeed = realSpeed * 4;
-           else if (realSpeed > -600)
-               realSpeed = realSpeed * 3;
-           else if (realSpeed > -800)
                realSpeed = realSpeed * 2;
+           else if (realSpeed > -600)
+               realSpeed = (realSpeed * 3)/2;
+           else if (realSpeed > -800)
+               realSpeed = (realSpeed * 5)/4;
            realSpeed = 1023 + realSpeed; // realSpeed is negative!
         }
 
