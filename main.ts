@@ -83,7 +83,8 @@ namespace bitbot {
 
         let realSpeed = speed;
         if (!forward) {
-            realSpeed = 1023 - realSpeed;
+            //realSpeed = 1023 - realSpeed;
+		realSpeed = 400;
         }
 
         if ((motor == BBMotor.Left) || (motor == BBMotor.All)) {
