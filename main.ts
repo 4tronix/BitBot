@@ -84,13 +84,13 @@ namespace bitbot {
         let realSpeed = speed;
         if (!forward) {
            if (realSpeed > -200)
-               realSpeed = reaslSpeed * 5;
+               realSpeed = realSpeed * 5;
            else if (realSpeed > -400)
-               realSpeed = reaslSpeed * 4;
+               realSpeed = realSpeed * 4;
            else if (realSpeed > -600)
-               realSpeed = reaslSpeed * 3;
+               realSpeed = realSpeed * 3;
            else if (realSpeed > -800)
-               realSpeed = reaslSpeed * 2;
+               realSpeed = realSpeed * 2;
            realSpeed = 1023 + realSpeed; // realSpeed is negative!
         }
 
