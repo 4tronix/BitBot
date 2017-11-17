@@ -83,10 +83,10 @@ namespace bitbot {
 
         let realSpeed = speed;
         if (!forward) {
-		basic.showNumber(realSpeed);
-           realSpeed = 1023 - realSpeed;
+		//basic.showNumber(realSpeed);
+           realSpeed = 1023 + realSpeed; // realSpeed is negative!
 		//realSpeed = 400;
-		//basic.showNumber(400);
+		basic.showNumber(realSpeed);
         }
 
         if ((motor == BBMotor.Left) || (motor == BBMotor.All)) {
