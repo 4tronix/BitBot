@@ -12,6 +12,16 @@ enum BBMotor {
 }
 
 /**
+  * Enumeration of directions.
+  */
+enum BBRobotDirection {
+    //% block="left"
+    Left,
+    //% block="right"
+    Right
+}
+
+/**
   * Enumeration of line sensors.
   */
 enum BBLineSensor {
@@ -65,6 +75,70 @@ namespace bitbot {
     }
 
     /**
+      * Drive robot forward (or backward) at speed.
+      *
+      * @param speed speed of motor between -1023 and 1023.
+      */
+    //% blockId="bitbot_motor_forward" block="drive at speed %speed"
+    //% speed.min=-1023 speed.max=1023
+    //% weight=110
+    export function drive(speed: number): void {
+        motor(BBMotor.All, speed);
+    }
+
+    /**
+      * Drive robot forward (or backward) at speed for milliseconds.
+      *
+      * @param speed speed of motor between -1023 and 1023.
+      * @param milliseconds duration in milliseconds to drive forward for, then stop.
+      */
+    //% blockId="bitbot_motor_forward_milliseconds" block="drive at speed %speed| for milliseconds %milliseconds"
+    //% speed.min=-1023 speed.max=1023
+    //% weight=131
+    export function driveMilliseconds(speed: number, milliseconds: number): void {
+        drive(speed);
+        basic.pause(milliseconds);
+        drive(0);
+    }
+
+    /**
+      * Turn robot in direction at speed.
+      *
+      * @param direction direction to turn.
+      * @param speed speed of motor between 0 and 1023.
+      */
+    //% blockId="bitbot_turn" block="turn in direction %direction|speed %speed"
+    //% speed.min=0 speed.max=1023
+    //% weight=109
+    export function driveTurn(direction: BBRobotDirection, speed: number): void {
+        if (speed < 0) speed = 0;
+
+        if (direction == BBRobotDirection.Left) {
+            motor(BBMotor.Left, speed);
+            motor(BBMotor.Right, -speed);
+        } else if (direction == BBRobotDirection.Right) {
+            motor(BBMotor.Left, -speed);
+            motor(BBMotor.Right, speed);
+        }
+    }
+
+    /**
+      * Turn robot in direction at speed for milliseconds.
+      *
+      * @param direction direction to turn.
+      * @param speed speed of motor between 0 and 1023.
+      * @param milliseconds duration in milliseconds to turn for, then stop.
+      */
+    //% blockId="bitbot_turn_milliseconds" block="turn in direction %direction|speed %speed| for milliseconds %milliseconds"
+    //% speed.min=0 speed.max=1023
+    //% weight=130
+    export function driveTurnMilliseconds(direction: BBRobotDirection, speed: number, milliseconds: number): void {
+        driveTurn(direction, speed)
+        basic.pause(milliseconds)
+        motor(BBMotor.All, 0)
+    }
+
+    /**
       * Drive motor(s) forward or reverse.
       *
       * @param motor motor to drive.
@@ -83,15 +157,15 @@ namespace bitbot {
 
         let realSpeed = speed;
         if (!forward) {
-           if (realSpeed >= -200)
-               realSpeed = (realSpeed * 19)/6;
-           else if (realSpeed >= -400)
-               realSpeed = realSpeed * 2;
-           else if (realSpeed >= -600)
-               realSpeed = (realSpeed * 3)/2;
-           else if (realSpeed >= -800)
-               realSpeed = (realSpeed * 5)/4;
-           realSpeed = 1023 + realSpeed; // realSpeed is negative!
+            if (realSpeed >= -200)
+                realSpeed = (realSpeed * 19) / 6;
+            else if (realSpeed >= -400)
+                realSpeed = realSpeed * 2;
+            else if (realSpeed >= -600)
+                realSpeed = (realSpeed * 3) / 2;
+            else if (realSpeed >= -800)
+                realSpeed = (realSpeed * 5) / 4;
+            realSpeed = 1023 + realSpeed; // realSpeed is negative!
         }
 
         if ((motor == BBMotor.Left) || (motor == BBMotor.All)) {
@@ -224,7 +298,7 @@ namespace bitbot {
     //% blockId="bitbot_neo_brightness" block="set led brightness %brightness"
     //% weight=10
     export function neoBrightness(brightness: number): void {
-        neo().setBrigthness(brightness);
+        neo().setBrightness(brightness);
     }
 
     /**
