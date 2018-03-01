@@ -1,6 +1,6 @@
 # BitBot Package for Microsoft PXT
 
-Based off initial work by [Sten Roger Sandvik](https://github.com/srs/pxt-bitbot), updated by [Gareth Davies](https://github.com/4tronix) and [Andrew Mulholland](https://github.com/gbaman). 
+Based off [initial work](https://github.com/srs/pxt-bitbot) by [Sten Roger Sandvik](https://github.com/srs), updated/expanded by [Gareth Davies](https://github.com/4tronix) and [Andrew Mulholland](https://github.com/gbaman). 
 
 This library provides a Microsoft PXT package for BitBot, see
 https://4tronix.co.uk/bitbot/.
