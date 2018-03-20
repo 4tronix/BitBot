@@ -292,7 +292,7 @@ namespace bitbot {
     }
 
     /**
-     * Set the brightness of the strip.
+     * Set the brightness of the strip. Note this only applies to future writes to the strip.
      *
      * @param brightness a measure of LED brightness in 0-255. eg: 255
      */
