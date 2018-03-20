@@ -185,6 +185,7 @@ namespace bitbot {
       * @param flag Flag to set (0) for off and (1) for on.
       */
     //% blockId="bitbot_buzz" block="buzz sound %flag"
+    //% flag.min=0 flag.max=1
     //% weight=95
     export function buzz(flag: number): void {
         pins.digitalWritePin(DigitalPin.P14, flag === 0 ? 0 : 1);
@@ -296,6 +297,7 @@ namespace bitbot {
      * @param brightness a measure of LED brightness in 0-255. eg: 255
      */
     //% blockId="bitbot_neo_brightness" block="set led brightness %brightness"
+    //% brightness.min=0 brightness.max=255
     //% weight=10
     export function neoBrightness(brightness: number): void {
         neo().setBrightness(brightness);
