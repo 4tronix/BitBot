@@ -1,14 +1,47 @@
 # BitBot Package for Microsoft PXT
 
-[![Build Status](https://travis-ci.org/srs/pxt-bitbot.svg?branch=master)](https://travis-ci.org/srs/pxt-bitbot)
-[![GitHub Tag](https://img.shields.io/github/tag/srs/pxt-bitbot.svg)]()
+Based off [initial work](https://github.com/srs/pxt-bitbot) by [Sten Roger Sandvik](https://github.com/srs), updated/expanded by [Gareth Davies](https://github.com/4tronix) and [Andrew Mulholland](https://github.com/gbaman). 
 
 This library provides a Microsoft PXT package for BitBot, see
 https://4tronix.co.uk/bitbot/.
 
+## Driving the robot    
+The simplist way to drive robot is using the robot is by using the `driveMilliseconds(...)` and `driveTurnMilliseconds(...)` blocks.   
+Note with `driveMilliseconds(...)`, you can specify a negative speed to reverse.   
+```blocks
+// Drive forward for 2000 ms
+bitbot.driveMilliseconds(1023, 2000)
+
+// Drive backwards for 2000 ms
+bitbot.driveMilliseconds(-1023, 2000)
+
+// Turn left for 200 ms
+bitbot.driveTurnMilliseconds(BBRobotDirection.Left, 1023, 200)
+
+// Turn right for 200 ms
+bitbot.driveTurnMilliseconds(BBRobotDirection.Right, 1023, 200)
+```   
+
+These blocks are also available in non blocking version. The following example performs the same operation as above.   
+```blocks
+bitbot.drive(1023)
+basic.pause(1000)
+
+bitbot.drive(0)
+basic.pause(1000)
+
+bitbot.driveTurn(BBRobotDirection.Left, 1023)
+basic.pause(250)
+
+bitbot.driveTurn(BBRobotDirection.Right, 1023)
+basic.pause(250)
+
+bitbot.drive(0)
+```
+
 ## Driving the motor
 
-Use `bitbot.motor(..)` to drive motor either forward or reverse. The value
+If you want more fine grain control of individal motors, use `bitbot.motor(..)` to drive motor either forward or reverse. The value
 indicates speed and is between `-1023` to `1023`. Minus indicates reverse.
 
 ```blocks
