@@ -114,11 +114,11 @@ namespace bitbot {
         if (speed < 0) speed = 0;
 
         if (direction == BBRobotDirection.Left) {
-            motor(BBMotor.Left, speed);
-            motor(BBMotor.Right, -speed);
-        } else if (direction == BBRobotDirection.Right) {
             motor(BBMotor.Left, -speed);
             motor(BBMotor.Right, speed);
+        } else if (direction == BBRobotDirection.Right) {
+            motor(BBMotor.Left, speed);
+            motor(BBMotor.Right, -speed);
         }
     }
 
