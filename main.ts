@@ -1,4 +1,4 @@
-
+﻿
 /**
   * Enumeration of motors.
   */
@@ -56,7 +56,7 @@ enum BBPingUnit {
 /**
  * Custom blocks
  */
-//% weight=10 color=#0fbc11 icon="\uf1b9"
+//% weight=10 color=#e7660b icon="\uf1b9"
 namespace bitbot {
 
     let neoStrip: neopixel.Strip;
@@ -332,5 +332,17 @@ namespace bitbot {
             case BBPingUnit.Inches: return d / 148;
             default: return d;
         }
+    }
+
+    /**
+      * Adjust opening of Claw attachment
+      *
+      * @param degrees Degrees to open Claw.
+      */
+    //% blockId="robobit_set_claw" block="Set claw %degrees"
+    //% weight=90
+    export function setClaw(degrees: number): void
+    {
+        pins.servoWritePin(AnalogPin.P15, Math.clamp(0, 80, degrees))
     }
 }
