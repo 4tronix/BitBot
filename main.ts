@@ -339,7 +339,7 @@ namespace bitbot {
       *
       * @param degrees Degrees to open Claw.
       */
-    //% blockId="robobit_set_claw" block="Set claw %degrees"
+    //% blockId="bitbot_set_claw" block="set claw %degrees"
     //% weight=90
     export function setClaw(degrees: number): void
     {
