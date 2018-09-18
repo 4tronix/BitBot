@@ -158,13 +158,13 @@ namespace bitbot {
         let realSpeed = speed;
         if (!forward) {
             if (realSpeed >= -200)
-                realSpeed = (realSpeed * 19) / 6;
+                realSpeed = Math.idiv(realSpeed * 19, 6);
             else if (realSpeed >= -400)
                 realSpeed = realSpeed * 2;
             else if (realSpeed >= -600)
-                realSpeed = (realSpeed * 3) / 2;
+                realSpeed = Math.idiv(realSpeed * 3, 2);
             else if (realSpeed >= -800)
-                realSpeed = (realSpeed * 5) / 4;
+                realSpeed = Math.idiv(realSpeed * 5, 4);
             realSpeed = 1023 + realSpeed; // realSpeed is negative!
         }
 
@@ -335,14 +335,15 @@ namespace bitbot {
     }
 
     /**
-      * Adjust opening of Claw attachment
+      * Adjust opening of Talon attachment
       *
-      * @param degrees Degrees to open Claw.
+      * @param degrees Degrees to open Talon
       */
-    //% blockId="bitbot_set_claw" block="set claw %degrees"
+    //% blockId="bitbot_set_talon" block="set talon %degrees"
     //% weight=90
-    export function setClaw(degrees: number): void
+    //% degrees.min=0 degrees.max=80
+    export function setTalon(degrees: number): void
     {
-        pins.servoWritePin(AnalogPin.P15, Math.clamp(0, 80, degrees))
+        pins.servoWritePin(AnalogPin.P15, degrees)
     }
 }

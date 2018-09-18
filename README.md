@@ -6,7 +6,7 @@ This library provides a Microsoft PXT package for BitBot, see
 https://4tronix.co.uk/bitbot/.
 
 ## Driving the robot    
-The simplist way to drive robot is using the robot is by using the `driveMilliseconds(...)` and `driveTurnMilliseconds(...)` blocks.   
+The simplest way to drive robot is by using the `driveMilliseconds(...)` and `driveTurnMilliseconds(...)` blocks.   
 Note with `driveMilliseconds(...)`, you can specify a negative speed to reverse.   
 ```blocks
 // Drive forward for 2000 ms
