@@ -151,4 +151,4 @@ bitbot.neo().show();
 
 ## License
 
-Apache 2.0
+MIT
