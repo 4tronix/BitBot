@@ -10,7 +10,8 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/no/bitbot-strings.json"
+        "_locales/no/bitbot-strings.json",
+        "_locales/no/bitbot-jsdoc-strings.json"
     ],
     "testFiles": [
         "tests.ts"
