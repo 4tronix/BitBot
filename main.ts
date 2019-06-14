@@ -24,6 +24,17 @@ enum BBRobotDirection
 }
 
 /**
+  * Stop modes. Coast or Brake
+  */
+enum BBStopMode
+{
+    //% block="no brake"
+    Coast,
+    //% block="brake"
+    Brake
+}
+
+/**
   * Values for buzzer. On or Off
   */
 enum BBBuzz
@@ -121,14 +132,70 @@ namespace bitbot
 // Motor Blocks
 
     // slow PWM frequency for slower speeds to improve torque
-    function setPWM(): void
+    function setPWM(speed: number): void
     {
-        if ((leftSpeed < 200) || (rightSpeed < 200))
+        if (speed < 200)
             pins.analogSetPeriod(AnalogPin.P0, 60000);
-        else if ((leftSpeed < 300) || (rightSpeed < 300))
+        else if (speed < 300)
             pins.analogSetPeriod(AnalogPin.P0, 40000);
         else
             pins.analogSetPeriod(AnalogPin.P0, 30000);
+    }
+
+    /**
+      * Drive motor(s) forward or reverse.
+      * @param motor motor to drive.
+      * @param speed speed of motor (-1023 to 1023). eg: 600
+      */
+    //% blockId="bitbot_motor" block="drive %motor|motor(s) at speed %speed"
+    //% weight=80
+    //% subcategory=Motors
+    export function motor(motor: BBMotor, speed: number): void
+    {
+        let speed0 = 0;
+        let speed1 = 0;
+        setPWM(Math.abs(speed));
+        if (speed == 0)
+            robot_stop(BBStopMode.Coast);
+        else if (speed > 0)
+        {
+            speed0 = speed;
+            speed1 = 0;
+        }
+        else
+        {
+            speed0 = 0;
+            speed1 = 0 - speed;
+        }
+        if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
+        {
+            pins.analogWritePin(AnalogPin.P0, speed0);
+            pins.analogWritePin(AnalogPin.P8, speed1);
+        }
+
+        if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
+        {
+            pins.analogWritePin(AnalogPin.P1, speed0);
+            pins.analogWritePin(AnalogPin.P12, speed1);
+        }
+    }
+
+    /**
+      * Stop robot by coasting slowly to a halt or braking
+      * @param mode Brakes on or off
+      */
+    //% blockId="robot_stop" block="stop with %mode"
+    //% weight=92
+    //% subcategory=Motors
+    export function robot_stop(mode: BBStopMode): void
+    {
+        let stopMode = 0;
+        if (mode == BBStopMode.Brake)
+            stopMode = 1;
+        pins.digitalWritePin(DigitalPin.P0, stopMode);
+        pins.digitalWritePin(DigitalPin.P1, stopMode);
+        pins.digitalWritePin(DigitalPin.P8, stopMode);
+        pins.digitalWritePin(DigitalPin.P12, stopMode);
     }
 
     /**
@@ -200,56 +267,6 @@ namespace bitbot
         driveTurn(direction, speed)
         basic.pause(milliseconds)
         motor(BBMotor.Both, 0)
-    }
-
-    /**
-      * Drive motor(s) forward or reverse.
-      * @param motor motor to drive.
-      * @param speed speed of motor (-1023 to 1023). eg: 600
-      */
-    //% blockId="bitbot_motor" block="drive %motor|motor(s) at speed %speed"
-    //% weight=80
-    //% subcategory=Motors
-    export function motor(motor: BBMotor, speed: number): void
-    {
-        let forward = (speed >= 0);
-        let absSpeed = Math.abs(speed);
-        if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
-            leftSpeed = absSpeed;
-        if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
-            rightSpeed = absSpeed;
-        setPWM();
-
-        if (speed > 1023)
-            speed = 1023;
-        else if (speed < -1023)
-            speed = -1023;
-
-        let realSpeed = speed;
-        if (!forward)
-        {
-            if (realSpeed >= -200)
-                realSpeed = Math.idiv(realSpeed * 19, 6);
-            else if (realSpeed >= -400)
-                realSpeed = realSpeed * 2;
-            else if (realSpeed >= -600)
-                realSpeed = Math.idiv(realSpeed * 3, 2);
-            else if (realSpeed >= -800)
-                realSpeed = Math.idiv(realSpeed * 5, 4);
-            realSpeed = 1023 + realSpeed; // realSpeed is negative!
-        }
-
-        if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
-        {
-            pins.analogWritePin(AnalogPin.P0, realSpeed);
-            pins.digitalWritePin(DigitalPin.P8, forward ? 0 : 1);
-        }
-
-        if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
-        {
-            pins.analogWritePin(AnalogPin.P1, realSpeed);
-            pins.digitalWritePin(DigitalPin.P12, forward ? 0 : 1);
-        }
     }
 
 // Sensors and Addons

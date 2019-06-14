@@ -39,6 +39,14 @@ basic.pause(250)
 bitbot.drive(0)
 ```
 
+## Stopping
+When the motor speed is set to zero then it stops. However, we can also use the motor itself to create a reverse generated current to brake much quicker.
+This helps when aiming for more accurate manoeuvres. Use the `bitbot.stop(...)` command to stop with braking, or coast to a halt
+```blocks
+bitbot.robot_stop(BBStopMode.Coast) # slowly coast to a stop
+bitbot.robot_stop(BBStopMode.Brake) # rapidly brake
+```
+
 ## Driving the motor
 
 If you want more fine grain control of individal motors, use `bitbot.motor(..)` to drive motor either forward or reverse. The value
