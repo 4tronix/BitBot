@@ -92,6 +92,16 @@ enum BBMode
 }
 
 /**
+  * Model Types of BitBot
+  * Classic or XL
+  */
+enum BBModel
+{
+    Classic,
+    XL
+}
+
+/**
   * Pre-Defined LED colours
   */
 enum BBColors
@@ -128,6 +138,21 @@ namespace bitbot
     let _updateMode = BBMode.Auto;
     let leftSpeed = 0;
     let rightSpeed = 0;
+    let _model = BBModel.Classic;
+    let i2caddr = 28;
+
+    /**
+      * Select Model of BitBot (Determines Pins used)
+      *
+      * @param model Model of BitBot; Classic or XL
+      */
+    //% blockId="bitbot_model" block="select BitBot model %model"
+    //% weight=100
+    //% deprecated=true
+    export function select_model(model: BBModel): void
+    {
+        _model = model;
+    }
 
 // Motor Blocks
 
@@ -169,14 +194,30 @@ namespace bitbot
         }
         if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
         {
-            pins.analogWritePin(AnalogPin.P0, speed0);
-            pins.analogWritePin(AnalogPin.P8, speed1);
+            if (_model == BBModel.Classic)
+            {
+                pins.analogWritePin(AnalogPin.P0, speed0);
+                pins.analogWritePin(AnalogPin.P8, speed1);
+            }
+            else
+            {
+                pins.analogWritePin(AnalogPin.P16, speed0);
+                pins.analogWritePin(AnalogPin.P8, speed1);
+            }
         }
 
         if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
         {
-            pins.analogWritePin(AnalogPin.P1, speed0);
-            pins.analogWritePin(AnalogPin.P12, speed1);
+            if (_model == BBModel.Classic)
+            {
+                pins.analogWritePin(AnalogPin.P1, speed0);
+                pins.analogWritePin(AnalogPin.P12, speed1);
+            }
+            else
+            {
+                pins.analogWritePin(AnalogPin.P14, speed0);
+                pins.analogWritePin(AnalogPin.P12, speed1);
+            }
         }
     }
 
@@ -192,10 +233,20 @@ namespace bitbot
         let stopMode = 0;
         if (mode == BBStopMode.Brake)
             stopMode = 1;
-        pins.digitalWritePin(DigitalPin.P0, stopMode);
-        pins.digitalWritePin(DigitalPin.P1, stopMode);
-        pins.digitalWritePin(DigitalPin.P8, stopMode);
-        pins.digitalWritePin(DigitalPin.P12, stopMode);
+        if (_model == BBModel.Classic)
+        {
+            pins.digitalWritePin(DigitalPin.P0, stopMode);
+            pins.digitalWritePin(DigitalPin.P1, stopMode);
+            pins.digitalWritePin(DigitalPin.P8, stopMode);
+            pins.digitalWritePin(DigitalPin.P12, stopMode);
+        }
+        else
+        {
+            pins.digitalWritePin(DigitalPin.P16, stopMode);
+            pins.digitalWritePin(DigitalPin.P1, stopMode);
+            pins.digitalWritePin(DigitalPin.P14, stopMode);
+            pins.digitalWritePin(DigitalPin.P12, stopMode);
+        }
     }
 
     /**
@@ -280,10 +331,13 @@ namespace bitbot
     //% subcategory=Sensors
     export function buzz(flag: BBBuzz): void
     {
-        if (flag==BBBuzz.Off)
-            pins.digitalWritePin(DigitalPin.P14, 0);
+        let buzz = 0;
+        if (flag==BBBuzz.On)
+            buzz = 1;
+        if (_model == BBModel.Classic)
+            pins.digitalWritePin(DigitalPin.P14, buzz);
         else
-            pins.digitalWritePin(DigitalPin.P14, 1);
+            pins.digitalWritePin(DigitalPin.P0, buzz);
     }
 
     /**
@@ -330,10 +384,21 @@ namespace bitbot
     //% subcategory=Sensors
     export function readLine(sensor: BBLineSensor): number
     {
-        if (sensor == BBLineSensor.Left)
-            return pins.digitalReadPin(DigitalPin.P11);
+        if (_model == BBModel.Classic)
+        {
+            if (sensor == BBLineSensor.Left)
+                return pins.digitalReadPin(DigitalPin.P11);
+            else
+                return pins.digitalReadPin(DigitalPin.P5);
+        }
         else
-            return pins.digitalReadPin(DigitalPin.P5);
+        {
+            let value = pins.i2cReadNumber(i2caddr, NumberFormat.Int8LE, false);
+            if (sensor == BBLineSensor.Left)
+                return value & 0x01;
+            else
+                return (value & 0x02) >> 1;
+        }
     }
 
     /**
@@ -345,15 +410,25 @@ namespace bitbot
     //% subcategory=Sensors
     export function readLight(sensor: BBLightSensor): number
     {
-        if (sensor == BBLightSensor.Left)
+        if (_model == BBModel.Classic)
         {
-            pins.digitalWritePin(DigitalPin.P16, 0);
-            return pins.analogReadPin(AnalogPin.P2);
+            if (sensor == BBLightSensor.Left)
+            {
+                pins.digitalWritePin(DigitalPin.P16, 0);
+                return pins.analogReadPin(AnalogPin.P2);
+            }
+            else
+            {
+                pins.digitalWritePin(DigitalPin.P16, 1);
+                return pins.analogReadPin(AnalogPin.P2);
+            }
         }
         else
         {
-            pins.digitalWritePin(DigitalPin.P16, 1);
-            return pins.analogReadPin(AnalogPin.P2);
+            if (sensor == BBLightSensor.Left)
+                return pins.analogReadPin(AnalogPin.P2);
+            else
+                return pins.analogReadPin(AnalogPin.P1);
         }
     }
 
