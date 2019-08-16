@@ -1,6 +1,6 @@
 {
-    "name": "bitbot",
-    "version": "1.1.0",
+    "name": "BitBot",
+    "version": "1.2.1",
     "description": "A BitBot package for pxt-microbit",
     "license": "MIT",
     "dependencies": {
@@ -10,7 +10,8 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/no/bitbot-strings.json"
+        "_locales/no/bitbot-strings.json",
+        "_locales/no/bitbot-jsdoc-strings.json"
     ],
     "testFiles": [
         "tests.ts"
