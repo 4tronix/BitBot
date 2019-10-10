@@ -97,9 +97,9 @@ enum BBMode
   */
 enum BBModel
 {
-    Auto,
     Classic,
-    XL
+    XL,
+    Auto
 }
 
 /**
@@ -142,16 +142,20 @@ namespace bitbot
     let _model = BBModel.Auto;
     let i2caddr = 28;
 
+// Blocks for selecting BitBot Model
+
     /**
       * Force Model of BitBot (Determines Pins used)
       *
       * @param model Model of BitBot; Classic or XL
       */
-    //% blockId="bitbot_model" block="select BitBot model %model"
+    //% blockId="bitbot_model" block="select BitBot model %model=bb_models"
     //% weight=100
-    export function select_model(model: BBModel): void
+    //% subcategory=BitBot_Model
+    export function select_model(model: number): void
     {
-        _model = model;
+        if((model >= BBModels(BBModel.Classic)) && (model <= BBModels(BBModel.Auto)))
+            _model = model;
     }
 
     /**
@@ -159,6 +163,7 @@ namespace bitbot
       */
     //% blockId="bb_model" block="BitBot model"
     //% weight=90
+    //% subcategory=BitBot_Model
     export function getModel(): BBModel
     {
         if (_model == BBModel.Auto)
@@ -169,6 +174,19 @@ namespace bitbot
                 _model = BBModel.XL;
         }
         return _model;
+    }
+
+    /**
+      * Get numeric value of BitBot Model
+      *
+      * @param model BitBot Model eg: BBModel.Classic
+      */
+    //% blockId="bb_models" block=%model
+    //% weight=80
+    //% subcategory=BitBot_Model
+    export function BBModels(model: BBModel): number
+    {
+        return model;
     }
 
 // Motor Blocks
