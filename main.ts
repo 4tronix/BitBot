@@ -478,9 +478,9 @@ namespace bitbot
     export function setTalon(degrees: number): void
     {
         if (getModel() == BBModel.Classic)
-            pins.servoWritePin(AnalogPin.P1, degrees);
-        else
             pins.servoWritePin(AnalogPin.P15, degrees);
+        else
+            pins.servoWritePin(AnalogPin.P2, degrees);
     }
 
 // LED Blocks
