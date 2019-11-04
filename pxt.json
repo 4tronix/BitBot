@@ -1,7 +1,7 @@
 {
     "name": "BitBot",
-    "version": "1.2.6",
-    "description": "A BitBot package for pxt-microbit",
+    "version": "1.2.7",
+    "description": "Microsoft MakeCode package for 4tronix BitBot robot",
     "license": "MIT",
     "dependencies": {
         "core": "*",
