@@ -171,7 +171,10 @@ namespace bitbot
             if ((pins.i2cReadNumber(i2caddr, NumberFormat.Int8LE, false) & 0xf0) == 0)
                 _model = BBModel.Classic;
             else
+            {
                 _model = BBModel.XL;
+                pins.digitalWritePin(DigitalPin.P0, 0);
+            }
         }
         return _model;
     }
