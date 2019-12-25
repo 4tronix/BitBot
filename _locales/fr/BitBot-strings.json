@@ -27,7 +27,7 @@
   "BBStopMode.Coast|block": "sans frein",
   "bitbot.BBColours|block": "%color",
   "bitbot.buzz|block": "mettre le buzzer sur %flag",
-  "bitbot.convertRGB|block": "convertir vers %red| bert %green| bleu %blue",
+  "bitbot.convertRGB|block": "convertir vers %red| vert %green| bleu %blue",
   "bitbot.driveMilliseconds|block": "avancer à la vitesse %speed| pendant %milliseconds|(ms)",
   "bitbot.driveTurnMilliseconds|block": "pivoter vers %direction| à la vitesse %speed| pendant %milliseconds|(ms)",
   "bitbot.driveTurn|block": "pivoter vers %direction| à la vitesse %speed",
