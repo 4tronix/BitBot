@@ -1,6 +1,6 @@
 {
     "name": "BitBot",
-    "version": "1.2.7",
+    "version": "1.3.0",
     "description": "Microsoft MakeCode package for 4tronix BitBot robot",
     "license": "MIT",
     "dependencies": {
