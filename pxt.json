@@ -1,7 +1,7 @@
 {
     "name": "BitBot",
-    "version": "1.2.1",
-    "description": "A BitBot package for pxt-microbit",
+    "version": "1.3.0",
+    "description": "Microsoft MakeCode package for 4tronix BitBot robot",
     "license": "MIT",
     "dependencies": {
         "core": "*",
@@ -10,8 +10,10 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/no/bitbot-strings.json",
-        "_locales/no/bitbot-jsdoc-strings.json"
+        "_locales/no/BitBot-strings.json",
+        "_locales/no/BitBot-jsdoc-strings.json",
+        "_locales/fr/BitBot-strings.json",
+        "_locales/fr/BitBot-jsdoc-strings.json"
     ],
     "testFiles": [
         "tests.ts"

@@ -98,7 +98,8 @@ enum BBMode
 enum BBModel
 {
     Classic,
-    XL
+    XL,
+    Auto
 }
 
 /**
@@ -138,20 +139,57 @@ namespace bitbot
     let _updateMode = BBMode.Auto;
     let leftSpeed = 0;
     let rightSpeed = 0;
-    let _model = BBModel.Classic;
+    let _model = BBModel.Auto;
     let i2caddr = 28;
 
+// Blocks for selecting BitBot Model
+
     /**
-      * Select Model of BitBot (Determines Pins used)
+      * Force Model of BitBot (Determines Pins used)
       *
       * @param model Model of BitBot; Classic or XL
       */
-    //% blockId="bitbot_model" block="select BitBot model %model"
+    //% blockId="bitbot_model" block="select BitBot model %model=bb_models"
     //% weight=100
-    //% deprecated=true
-    export function select_model(model: BBModel): void
+    //% subcategory=BitBot_Model
+    export function select_model(model: number): void
     {
-        _model = model;
+        if((model >= BBModels(BBModel.Classic)) && (model <= BBModels(BBModel.Auto)))
+            _model = model;
+    }
+
+    /**
+      * get Model of BitBot (Classic or XL)
+      */
+    //% blockId="bb_model" block="BitBot model"
+    //% weight=90
+    //% subcategory=BitBot_Model
+    export function getModel(): BBModel
+    {
+        if (_model == BBModel.Auto)
+        {
+            if ((pins.i2cReadNumber(i2caddr, NumberFormat.Int8LE, false) & 0xf0) == 0)
+                _model = BBModel.Classic;
+            else
+            {
+                _model = BBModel.XL;
+                pins.digitalWritePin(DigitalPin.P0, 0);
+            }
+        }
+        return _model;
+    }
+
+    /**
+      * Get numeric value of BitBot Model
+      *
+      * @param model BitBot Model eg: BBModel.Classic
+      */
+    //% blockId="bb_models" block=%model
+    //% weight=80
+    //% subcategory=BitBot_Model
+    export function BBModels(model: BBModel): number
+    {
+        return model;
     }
 
 // Motor Blocks
@@ -194,7 +232,7 @@ namespace bitbot
         }
         if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
         {
-            if (_model == BBModel.Classic)
+            if (getModel() == BBModel.Classic)
             {
                 pins.analogWritePin(AnalogPin.P0, speed0);
                 pins.analogWritePin(AnalogPin.P8, speed1);
@@ -208,7 +246,7 @@ namespace bitbot
 
         if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
         {
-            if (_model == BBModel.Classic)
+            if (getModel() == BBModel.Classic)
             {
                 pins.analogWritePin(AnalogPin.P1, speed0);
                 pins.analogWritePin(AnalogPin.P12, speed1);
@@ -233,7 +271,7 @@ namespace bitbot
         let stopMode = 0;
         if (mode == BBStopMode.Brake)
             stopMode = 1;
-        if (_model == BBModel.Classic)
+        if (getModel() == BBModel.Classic)
         {
             pins.digitalWritePin(DigitalPin.P0, stopMode);
             pins.digitalWritePin(DigitalPin.P1, stopMode);
@@ -334,7 +372,7 @@ namespace bitbot
         let buzz = 0;
         if (flag==BBBuzz.On)
             buzz = 1;
-        if (_model == BBModel.Classic)
+        if (getModel() == BBModel.Classic)
             pins.digitalWritePin(DigitalPin.P14, buzz);
         else
             pins.digitalWritePin(DigitalPin.P0, buzz);
@@ -384,7 +422,7 @@ namespace bitbot
     //% subcategory=Sensors
     export function readLine(sensor: BBLineSensor): number
     {
-        if (_model == BBModel.Classic)
+        if (getModel() == BBModel.Classic)
         {
             if (sensor == BBLineSensor.Left)
                 return pins.digitalReadPin(DigitalPin.P11);
@@ -410,7 +448,7 @@ namespace bitbot
     //% subcategory=Sensors
     export function readLight(sensor: BBLightSensor): number
     {
-        if (_model == BBModel.Classic)
+        if (getModel() == BBModel.Classic)
         {
             if (sensor == BBLightSensor.Left)
             {
@@ -442,7 +480,10 @@ namespace bitbot
     //% subcategory=Sensors
     export function setTalon(degrees: number): void
     {
-        pins.servoWritePin(AnalogPin.P15, degrees);
+        if (getModel() == BBModel.Classic)
+            pins.servoWritePin(AnalogPin.P15, degrees);
+        else
+            pins.servoWritePin(AnalogPin.P2, degrees);
     }
 
 // LED Blocks
