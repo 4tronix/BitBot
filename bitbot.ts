@@ -281,7 +281,7 @@ namespace bitbot
       * Force Model of BitBot (Determines Pins used)
       * @param model Model of BitBot; Classic or XL
       */
-    //% blockId="bitbot_model" block="select BitBot model %model"
+    //% blockId="bitbot_model" block="select BitBot model%model"
     //% weight=100
     //% subcategory=BitBot_Model
     export function select_model(model: BBModel): void
@@ -367,7 +367,7 @@ namespace bitbot
       * @param direction Move Forward or Reverse
       * @param speed speed of motor between 0 and 100. eg: 60
       */
-    //% blockId="BBGo" block="go %direction|at speed %speed"
+    //% blockId="BBGo" block="go%direction|at speed%speed|\\%"
     //% speed.min=0 speed.max=100
     //% weight=100
     //% subcategory=Motors
@@ -384,7 +384,7 @@ namespace bitbot
       * @param speed speed of motor between 0 and 100. eg: 60
       * @param milliseconds duration in milliseconds to drive forward for, then stop. eg: 400
       */
-    //% blockId="BBGoms" block="go %direction|at speed %speed|for %milliseconds|(ms)"
+    //% blockId="BBGoms" block="go%direction|at speed%speed|\\% for%milliseconds|ms"
     //% speed.min=0 speed.max=100
     //% weight=90
     //% subcategory=Motors
@@ -402,7 +402,7 @@ namespace bitbot
       * @param direction direction to turn
       * @param speed speed of motors (0 to 100). eg: 60
       */
-    //% blockId="BBRotate" block="spin %direction|at speed %speed"
+    //% blockId="BBRotate" block="spin%direction|at speed%speed|\\%"
     //% speed.min=0 speed.max=100
     //% weight=80
     //% subcategory=Motors
@@ -428,7 +428,7 @@ namespace bitbot
       * @param speed speed of motor between 0 and 100. eg: 60
       * @param milliseconds duration in milliseconds to spin for, then stop. eg: 400
       */
-    //% blockId="BBRotatems" block="spin %direction|at speed %speed|for %milliseconds|(ms)"
+    //% blockId="BBRotatems" block="spin%direction|at speed%speed|\\% for%milliseconds|ms"
     //% speed.min=0 speed.max=100
     //% weight=70
     //% subcategory=Motors
@@ -445,7 +445,7 @@ namespace bitbot
       * Stop robot by coasting slowly to a halt or braking
       * @param mode Brakes on or off
       */
-    //% blockId="BBstop" block="stop with %mode"
+    //% blockId="BBstop" block="stop with%mode"
     //% weight=60
     //% subcategory=Motors
     //% group="New style blocks"
@@ -468,7 +468,7 @@ namespace bitbot
       * @param direction select forwards or reverse
       * @param speed speed of motor between 0 and 100. eg: 60
       */
-    //% blockId="BBMove" block="move %motor|motor(s) %direction|at speed %speed"
+    //% blockId="BBMove" block="move%motor|motor(s)%direction|at speed%speed|\\%"
     //% weight=50
     //% speed.min=0 speed.max=100
     //% subcategory=Motors
@@ -514,7 +514,7 @@ namespace bitbot
       * @param direction direction to turn more (if robot goes right, set this to left)
       * @param bias percentage of speed to bias with eg: 10
       */
-    //% blockId="BBBias" block="bias%direction|by%bias|%"
+    //% blockId="BBBias" block="bias%direction|by%bias|\\%"
     //% bias.min=0 bias.max=80
     //% weight=40
     //% subcategory=Motors
@@ -541,13 +541,15 @@ namespace bitbot
       * @param motor motor to drive.
       * @param speed speed of motor (-1023 to 1023). eg: 600
       */
-    //% blockId="bitbot_motor" block="drive %motor|motor(s) at speed %speed"
+    //% blockId="bitbot_motor" block="drive%motor|motor(s) at speed%speed"
+    //% speed.min=-1023 speed.max=1023
     //% weight=80
     //% subcategory=Motors
     //% group="Old style blocks"
     //% blockGap=8
     export function motor(motor: BBMotor, speed: number): void
     {
+        speed = clamp(speed, -1023, 1023);
         let speed0 = 0;
         let speed1 = 0;
         setPWM(Math.abs(speed));
@@ -594,7 +596,7 @@ namespace bitbot
       * Drive robot forward (or backward) at speed.
       * @param speed speed of motor between -1023 and 1023. eg: 600
       */
-    //% blockId="bitbot_motor_forward" block="drive at speed %speed"
+    //% blockId="bitbot_motor_forward" block="drive at speed%speed"
     //% speed.min=-1023 speed.max=1023
     //% weight=100
     //% subcategory=Motors
@@ -610,7 +612,7 @@ namespace bitbot
       * @param speed speed of motor between -1023 and 1023. eg: 600
       * @param milliseconds duration in milliseconds to drive forward for, then stop. eg: 400
       */
-    //% blockId="bitbot_motor_forward_milliseconds" block="drive at speed %speed| for %milliseconds|(ms)"
+    //% blockId="bitbot_motor_forward_milliseconds" block="drive at speed%speed| for%milliseconds|ms"
     //% speed.min=-1023 speed.max=1023
     //% weight=95
     //% subcategory=Motors
@@ -628,7 +630,7 @@ namespace bitbot
       * @param direction direction to turn.
       * @param speed speed of motor between 0 and 1023. eg: 600
       */
-    //% blockId="bitbot_turn" block="spin %direction|at speed %speed"
+    //% blockId="bitbot_turn" block="spin%direction|at speed%speed"
     //% speed.min=0 speed.max=1023
     //% weight=90
     //% subcategory=Motors
@@ -656,7 +658,7 @@ namespace bitbot
       * @param speed speed of motor between 0 and 1023. eg: 600
       * @param milliseconds duration in milliseconds to turn for, then stop. eg: 400
       */
-    //% blockId="bitbot_turn_milliseconds" block="spin %direction|at speed %speed| for %milliseconds|(ms)"
+    //% blockId="bitbot_turn_milliseconds" block="spin%direction|at speed%speed| fo %milliseconds|ms"
     //% speed.min=0 speed.max=1023
     //% weight=85
     //% subcategory=Motors
@@ -693,7 +695,7 @@ namespace bitbot
       * Sets all LEDs to a given color (range 0-255 for r, g, b).
       * @param rgb RGB color of the LED
       */
-    //% blockId="bitbot_set_led_color" block="set all LEDs to %rgb=bb_colours"
+    //% blockId="bitbot_set_led_color" block="set all LEDs to%rgb=bb_colours"
     //% weight=100
     //% subcategory=FireLeds
     //% group=Basic
@@ -724,7 +726,7 @@ namespace bitbot
      * @param ledId position of the LED (0 to 11)
      * @param rgb RGB color of the LED
      */
-    //% blockId="bitbot_set_pixel_color" block="set LED at %ledId|to %rgb=bb_colours"
+    //% blockId="bitbot_set_pixel_color" block="set LED at%ledId|to%rgb=bb_colours"
     //% weight=80
     //% subcategory=FireLeds
     //% group=Basic
@@ -783,7 +785,7 @@ namespace bitbot
      * Set the brightness of the LEDs
      * @param brightness a measure of LED brightness in 0-255. eg: 40
      */
-    //% blockId="bitbot_led_brightness" block="set LED brightness %brightness"
+    //% blockId="bitbot_led_brightness" block="set LED brightness%brightness"
     //% brightness.min=0 brightness.max=255
     //% weight=100
     //% subcategory=FireLeds
@@ -799,7 +801,7 @@ namespace bitbot
       * Set LED update mode (Manual or Automatic)
       * @param updateMode setting automatic will show LED changes automatically
       */
-    //% blockId="bitbot_set_updateMode" block="set %updateMode|update mode"
+    //% blockId="bitbot_set_updateMode" block="set%updateMode|update mode"
     //% weight=90
     //% subcategory=FireLeds
     //% group=Advanced
@@ -867,14 +869,13 @@ namespace bitbot
       * Sound a buzz.
       * @param flag state of buzzer (On or Off)
       */
-    //% blockId="bitbot_buzz" block="turn buzzer %flag"
+    //% blockId="bitbot_buzz" block="turn buzzer%flag"
+    //% flag.shadow="toggleOnOff"
     //% weight=100
     //% subcategory="Inputs & Outputs"
-    export function buzz(flag: BBBuzz): void
+    export function buzz(flag: boolean): void
     {
-        let buzz = 0;
-        if (flag==BBBuzz.On)
-            buzz = 1;
+        let buzz = flag ? 1 : 0;
         if (getModel() == BBModel.Classic)
             pins.digitalWritePin(DigitalPin.P14, buzz);
         else
@@ -885,7 +886,7 @@ namespace bitbot
     * Read distance from sonar module connected to accessory connector.
     * @param unit desired conversion unit
     */
-    //% blockId="bitbot_sonar" block="read sonar as %unit"
+    //% blockId="bitbot_sonar" block="read sonar as%unit"
     //% weight=90
     //% subcategory="Inputs & Outputs"
     export function sonar(unit: BBPingUnit): number
@@ -977,7 +978,7 @@ namespace bitbot
       * Adjust opening of Talon attachment
       * @param degrees Degrees to open Talon (0 to 80). eg: 30
       */
-    //% blockId="bitbot_set_talon" block="open talon %degrees|degrees"
+    //% blockId="bitbot_set_talon" block="open talon%degrees|degrees"
     //% weight=60
     //% degrees.min=0 degrees.max=80
     //% subcategory="Inputs & Outputs"
@@ -995,7 +996,7 @@ namespace bitbot
       * @param servo servo to control. P1 or P2
       * @param degrees Degrees to turn servo (0 to 180). eg: 90
       */
-    //% blockId="BBSetServo" block="set servo%servo|to %degrees|degrees"
+    //% blockId="BBSetServo" block="set servo%servo|to%degrees|degrees"
     //% weight=50
     //% degrees.min=0 degrees.max=180
     //% subcategory="Inputs & Outputs"
@@ -1140,7 +1141,7 @@ namespace bitbot
       * Sets all Matrix LEDs to a given color
       * @param rgb RGB color of the LED
       */
-    //% blockId="setMatrix" block="Matrix all pixels to %rgb=bb_colours"
+    //% blockId="setMatrix" block="Matrix all pixels to%rgb=bb_colours"
     //% weight=90
     //% subcategory=Addons
     //% group="5x5 Matrix"
@@ -1161,7 +1162,7 @@ namespace bitbot
      * @param ledId linear position of the LED (0 to 24)
      * @param rgb RGB color of the LED
      */
-    //% blockId="setPixel" block="Matrix LED at %ledId|to %rgb=bb_colours"
+    //% blockId="setPixel" block="Matrix LED at%ledId|to%rgb=bb_colours"
     //% weight=80
     //% subcategory=Addons
     //% group="5x5 Matrix"
