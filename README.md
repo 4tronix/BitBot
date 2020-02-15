@@ -1,9 +1,8 @@
-# BitBot Package for Microsoft PXT
+# MakeCode Package for 4tronix BitBot Robot
 
-Based off [initial work](https://github.com/srs/pxt-bitbot) by [Sten Roger Sandvik](https://github.com/srs), updated/expanded by [Gareth Davies](https://github.com/4tronix) and [Andrew Mulholland](https://github.com/gbaman). 
+This library provides a Microsoft Makecode package for 4tronix BitBot and BitBot XL, see
+https://4tronix.co.uk/bitbot/
 
-This library provides a Microsoft PXT package for BitBot and BitBot XL, see
-https://4tronix.co.uk/bitbot/.
 
 ## Selecting the Model of BitBot
 You can now use either a classic BitBot or a BitBot XL. The pins used for motors and sensors are different
@@ -19,67 +18,69 @@ You can check what model is being used by:
 ```blocks
 bitbot.getModel()
 ```
-
 ## Driving the robot    
-The simplest way to drive robot is by using the `driveMilliseconds(...)` and `driveTurnMilliseconds(...)` blocks.   
-Note with `driveMilliseconds(...)`, you can specify a negative speed to reverse.   
+The simplest way to drive the robot is by using the `go(...)` or `goms(...)` blocks.
+With each of these blocks you specify Forward or Reverse, and a speed from 0 to 100.
+Both motors will be driven at the selected speed and direction.
 ```blocks
-// Drive forward for 2000 ms
-bitbot.driveMilliseconds(1023, 2000)
+// Move forward at speed 60 forever
+bitbot.go(BBDirection.Forward, 60)
 
-// Drive backwards for 2000 ms
-bitbot.driveMilliseconds(-1023, 2000)
-
-// Turn left for 200 ms
-bitbot.driveTurnMilliseconds(BBRobotDirection.Left, 1023, 200)
-
-// Turn right for 200 ms
-bitbot.driveTurnMilliseconds(BBRobotDirection.Right, 1023, 200)
-```   
-
-These blocks are also available in non blocking version. The following example performs the same operation as above.   
-```blocks
-bitbot.drive(1023)
-basic.pause(1000)
-
-bitbot.drive(0)
-basic.pause(1000)
-
-bitbot.driveTurn(BBRobotDirection.Left, 1023)
-basic.pause(250)
-
-bitbot.driveTurn(BBRobotDirection.Right, 1023)
-basic.pause(250)
-
-bitbot.drive(0)
+// Move backward at speed 100 for 2000 ms
+bitbot.goms(BBDirection.Reverse, 100, 2000)
 ```
+You can also spin/rotate the robot with the `rotate(...)` or `rotatems(...)` blocks
+```blocks
+// Rotate left at speed 70
+bitbot.rotate(BBRobotDirection.Left, 70)
+
+// Rotate right at speed 50 for 400ms
+bitbot.rotatems(BBRobotDirection.Right, 50, 400)
+```   
 
 ## Stopping
 When the motor speed is set to zero then it stops. However, we can also use the motor itself to create a reverse generated current to brake much quicker.
-This helps when aiming for more accurate manoeuvres. Use the `bitbot.stop(...)` command to stop with braking, or coast to a halt
+This helps when aiming for more accurate manoeuvres. Use the `stop(...)` command to stop with braking, or coast to a halt.
 ```blocks
-bitbot.robot_stop(BBStopMode.Coast) # slowly coast to a stop
-bitbot.robot_stop(BBStopMode.Brake) # rapidly brake
+bitbot.stop(BBStopMode.Coast) # slowly coast to a stop
+bitbot.stop(BBStopMode.Brake) # rapidly brake
 ```
 
-## Driving the motor
+## Driving the motors individually
 
-If you want more fine grain control of individal motors, use `bitbot.motor(..)` to drive motor either forward or reverse. The value
-indicates speed and is between `-1023` to `1023`. Minus indicates reverse.
+If you want more fine grain control of individal motors, use `bitbot.move(...)` to drive each motor either forward or reverse.
+You can specify the direction (Forward or Reverse) and speed between 0 and 100.
+If the left motor turns slower than the right motor, the robot will turn to the left
+```blocks
+// Drive both motors forward at speed 60. Equivalent to bitbot.go(BBDirection.Forward, 60)
+bitbot.move(BBMotor.Both, BBDirection.Forward, 60)
+
+// Drive left motor in reverse at speed 30
+bitbot.move(BBMotor.Left, BBDirection.Reverse, 30)
+
+// Drive forward in a leftward curve
+bitbot.move(BBMotor.Left, BBDirection.Forward, 40)
+bitbot.move(BBMotor.Right, BBDirection.Forward, 70)
+```
+
+## Making the Robot Drive Straight
+
+The small DC motors used in the BitBot and many other small robots are not guaranteed to go at the same speed as each other.
+This can cause the robot to veer off the straight line, either to left or to right, even when both motors are programmed to go
+at the same speed.
+We can partially correct for this by adding a direction bias to the motor speed settings.
+If your robot is veering to the right, then set the bias to the left.
+Conversely, if your robot is turning to the left, then set the bias to the right.
+It varies with speed and battery condition etc, but an approximation is that a 10% bias will result in about 15cm (6 inches)
+change of course over about 2m (6 feet).
+Note that the bias setting does not affect the old style motor blocks.
 
 ```blocks
-// Drive 1000 ms forward
-bitbot.motor(BBMotor.All, 1023);
-basic.pause(1000);
+// eg. robot leaves straight line to the right by about 10cm over 2m, so bias it to the left by 5%
+bitbot.BBBias(BBRobotDirection.Left, 5)
 
-// Drive 1000 ms reverse
-bitbot.motor(BBMotor.All, -1023);
-basic.pause(1000);
-
-// Drive 1000 ms forward on left and reverse on right
-bitbot.motor(BBMotor.Left, 1023);
-bitbot.motor(BBMotor.Right, -1023);
-basic.pause(1000);
+// eg. robot leaves straight line to left by 25cm, so bias it to the right by 15%
+bitbot.BBBias(BBRobotDirection.Right, 15)
 ```
 
 ## Buzz sound
@@ -127,47 +128,53 @@ let v2 = bitbot.sonar(BBPingUnit.Centimeters);
 let v3 = bitbot.sonar(BBPingUnit.Inches);
 ```
 
-## NeoPixel helpers
+## FireLed Functions
 
-The BitBot has 12 NeoPixels mounted. This library defines some helpers
-for using the NeoPixels.
+The BitBot has 12 FireLeds fitted.
+By default, the FireLeds are automatically updated after every setting. This makes it easy to understand.
+However, it can slow down some effects so there is a block provided to switch the update mode to
+Manual or Automatic:
 
 ```blocks
-// Show all leds
-bitbot.neoSetColor(neopixel.colors(NeoPixelColors.Red));
-bitbot.neoShow();
+// Set all FireLeds to Green (hard-coded RGB color)
+bitbot.setLedColor(0x00FF00)
+// Set all FireLeds to Green (built-in colour selection)
+bitbot.setLedColor(BBColors.Green)
 
 // Clear all leds
-bitbot.neoClear();
-bitbot.neoShow();
+bitbot.ledClear()
 
-// Show led at position 1
-bitbot.neoSetPixelColor(0, neopixel.colors(NeoPixelColors.Red));
-bitbot.neoShow();
+// Set the FireLed at position 0 to 11 to selected colour.
+// eg. set Fireled 3 to Red
+bitbot.setPixelColor(3, 0xff0000)
 
-// Show led rainbow
-bitbot.neoRainbow();
-bitbot.neoShow();
+// Set all the FireLeds to Rainbow (uses the colour wheel from Red to Purple)
+bitbot.ledRainbow()
 
-// Show led rainbow and shift
-bitbot.neoRainbow();
-bitbot.neoShift();
-bitbot.neoShow();
+// Shift FireLeds up one place, blanking the first FireLed
+bitbot.ledShift()
 
-// Show led rainbow and rotate
-bitbot.neoRainbow();
-bitbot.neoRotate();
-bitbot.neoShow();
-
-// Set brightness of leds
-bitbot.neoBrightness(100);
-bitbot.neoShow();
-
-// Use neo() variable
-bitbot.neo().clear();
-bitbot.neo().show();
+// Rotate FireLeds by shifting up one and replace the first with the last
+bitbot.ledRotate()
 ```
 
+There are some more advanced blocks that allow you to select colours using separate RGB values
+and select the brightness of the FireLeds.
+The brightness is set to 40 by default, but can go as high as 255
+You should be careful not to look directly at them when they are bright as they can damage eyes.
+```blocks
+// Switch FireLeds Update Mode to Manual or Automatic
+bitbot.setUpdateMode(BBMode.Manual);
+bitbot.setUpdateMode(BBMode.Auto);
+
+// Select colour from separate Red, Green and Blue values
+// Each of the Red, Green and Blue values can range from 0 to 255.
+// This example produces a pale blue colour
+let myColour = bitbot.convertRGB(50, 100, 200);
+
+// Set brightness of FireLeds to 100
+bitbot.ledBrightness(100);
+```
 ## Supported targets
 
 * for PXT/microbit

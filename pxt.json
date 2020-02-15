@@ -1,11 +1,12 @@
 {
     "name": "BitBot",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "Microsoft MakeCode package for 4tronix BitBot robot",
     "license": "MIT",
     "dependencies": {
         "core": "*",
-        "neopixel": "github:microsoft/pxt-neopixel#v0.6.10"
+        "fireled": "github:4tronix/FireLedsBase",
+        "firescreen": "github:4tronix/FireScreen#0.0.5"
     },
     "files": [
         "README.md",
