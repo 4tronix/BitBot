@@ -21,6 +21,6 @@
     "testFiles": [
         "tests.ts"
     ],
-    "yotta": {},
-    "public": true
+    "public": true,
+    "yotta": {}
 }
