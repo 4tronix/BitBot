@@ -58,7 +58,7 @@
   "bitbot.drive|block": "kjør med fart %speed",
   "bitbot.getModel|block": "BitBot-modell",	
   "bitbot.goms|block": "kjør %direction|med fart %speed|\\% i %milliseconds|millisekund",
-  "bitbot.go|block": "kjør %direction|med fart %speed"1\\%,
+  "bitbot.go|block": "kjør %direction|med fart %speed|\\%",
   "bitbot.ledBrightness|block": "sett LED lysstyrke %brightness",
   "bitbot.ledClear|block": "skru av alle LED",
   "bitbot.ledRainbow|block": "sett LED til regnbue",
