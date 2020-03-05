@@ -1,16 +1,20 @@
 {
-    "name": "bitbot",
-    "version": "0.4.1",
-    "description": "A BitBot package for pxt-microbit",
-    "license": "Apache",
+    "name": "BitBot",
+    "version": "1.4.1",
+    "description": "Microsoft MakeCode package for 4tronix BitBot robot",
+    "license": "MIT",
     "dependencies": {
         "core": "*",
-        "neopixel": "github:microsoft/pxt-neopixel#v0.6.2"
+        "fireled": "github:4tronix/FireLedsBase",
+        "firescreen": "github:4tronix/FireScreen#0.0.5"
     },
     "files": [
         "README.md",
-        "main.ts",
-        "_locales/no/bitbot-strings.json"
+        "bitbot.ts",
+        "_locales/no/BitBot-strings.json",
+        "_locales/no/BitBot-jsdoc-strings.json",
+        "_locales/fr/BitBot-strings.json",
+        "_locales/fr/BitBot-jsdoc-strings.json"
     ],
     "testFiles": [
         "tests.ts"
