@@ -13,12 +13,14 @@
         "bitbot.ts",
         "_locales/no/BitBot-strings.json",
         "_locales/no/BitBot-jsdoc-strings.json",
+        "_locales/nb/BitBot-strings.json",
+        "_locales/nb/BitBot-jsdoc-strings.json",
         "_locales/fr/BitBot-strings.json",
         "_locales/fr/BitBot-jsdoc-strings.json"
     ],
     "testFiles": [
         "tests.ts"
     ],
-    "yotta": {},
-    "public": true
+    "public": true,
+    "yotta": {}
 }
