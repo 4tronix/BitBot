@@ -44,7 +44,7 @@
   "bitbot.BBColours|block": "%color",
   "bitbot.BBModels|block": "%model",
   "bitbot.bb360Servo|block": "kontinuerlig servo%servo|%direction med fart%speed|\\%",
-  "bitbot.bbEnableBluetooth|block": "%enable| 22 Bluetooth",
+  "bitbot.bbEnableBluetooth|block": "%enable| Bluetooth",
   "bitbot.bbServoDeadband|block": "kontinuerlig servo nullområde%deadband|\\%",
   "bitbot.bbServoTrim|block": "kontinuerlig servo%servo|juster med%trim|\\%",
   "bitbot.bbSetServo|block": "sett servo%servo|til %degrees|grader",
