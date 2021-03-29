@@ -222,7 +222,7 @@ enum BBColors
  * Custom blocks
  */
 //% weight=50 color=#e7660b icon="\uf1b9"
-//% groups='["New style blocks","Basic","Advanced","Special","Ultrasonic","Line Sensor","5x5 Matrix","BitFace","OLED 128x64","Old style blocks"]'
+//% groups='["Basic","Advanced","Special","Ultrasonic","Line Sensor","5x5 Matrix","BitFace","OLED 128x64"]'
 namespace bitbot
 {
     let fireBand: fireled.Band;
@@ -238,11 +238,17 @@ namespace bitbot
     let mouthOooh: number[] = [1,2,3,4,6,7,8,9,10,13];
     let mouthEeeh: number[] = [0,1,2,3,4,5,6,7,8,9];
     let oled: firescreen.Screen;
+
     let leftBias = 0;
     let rightBias = 0;
+    let calibration: number[] = [0, 0, 0];
+    let leftCalib = 0;
+    let rightCalib = 0;
 
     let _model = BBModel.Auto;
-    let i2caddr = 28;
+    let i2caddr = 28;	// i2c address of I/O Expander
+    let EEROM = 0x50;	// i2c address of EEROM
+    let versionCode = -1;
     let lMotorD0: DigitalPin;
     let lMotorD1: DigitalPin;
     let lMotorA0: AnalogPin;
@@ -322,9 +328,10 @@ namespace bitbot
     //% subcategory=BitBot_Model
     export function getModel(): BBModel
     {
+        getVersionCode();
         if (_model == BBModel.Auto)
         {
-            if ((pins.i2cReadNumber(i2caddr, NumberFormat.Int8LE, false) & 0xf0) == 0)
+            if (versionCode == 0)
             {
                 select_model(BBModel.Classic);
             }
@@ -350,6 +357,140 @@ namespace bitbot
         return model;
     }
 
+    /**
+      * Get versionCode
+      */
+    //% blockId="getVersionCode"
+    //% block="version Code"
+    //% weight=80
+    //% subcategory=BitBot_Model
+    //% deprecated=true
+    export function getVersionCode(): number
+    {
+        if (versionCode == -1)	// first time requesting
+            versionCode = (pins.i2cReadNumber(i2caddr, NumberFormat.Int8LE, false) >> 4) & 0x0f;
+        return versionCode;
+    }
+
+// "DRIVE STRAIGHT" BLOCKS
+
+    // Uses bottom 3 bytes of EEROM for motor bias data
+    // Bias values from -100 to +100. Negative values decrease Left speed, Positive decrease right speed
+    // Byte 0 = Bias at 30, 1 = Bias at 60, 2 = Bias at 90
+
+    /**
+      * Write a byte of data to EEROM at selected address
+      * @param address Location in EEROM to write to
+      * @param data Byte of data to write
+      */
+    //% blockId="writeEEROM"
+    //% block="write%data|to address%address"
+    //% data.min = -128 data.max = 127
+    //% weight=100
+    //% deprecated=true
+    export function writeEEROM(data: number, address: number): void
+    {
+        wrEEROM(data, address);
+    }
+
+    function wrEEROM(data: number, address: number): void
+    {
+        if (getVersionCode() == 5)
+        {
+            let i2cData = pins.createBuffer(3);
+
+            i2cData[0] = address >> 8;	// address MSB
+            i2cData[1] = address & 0xff;	// address LSB
+            i2cData[2] = data & 0xff;
+            pins.i2cWriteBuffer(EEROM, i2cData, false);
+            basic.pause(1);			// needs a short pause. << 1ms ok?
+        }
+    }
+
+    /**
+      * Read a byte of data from EEROM at selected address
+      * @param address Location in EEROM to read from
+      */
+    //% blockId="readEEROM"
+    //% block="read EEROM address%address"
+    //% weight=90
+    //% deprecated=true
+    export function readEEROM(address: number): number
+    {
+        return rdEEROM(address);
+    }
+
+    // Uses bottom 3 bytes of EEROM for servo offsets. No user access
+    function rdEEROM(address: number): number
+    {
+        if (getVersionCode() == 5)
+        {
+            let i2cRead = pins.createBuffer(2);
+
+            i2cRead[0] = address >> 8;	// address MSB
+            i2cRead[1] = address & 0xff;	// address LSB
+            pins.i2cWriteBuffer(EEROM, i2cRead, false);
+            basic.pause(1);
+            return pins.i2cReadNumber(EEROM, NumberFormat.Int8LE);
+        }
+        else
+            return 0;
+    }
+
+    /**
+      * Load Calibration data from EEROM
+      */
+    //% blockId="loadCalibration"
+    //% block="Load calibration from EEROM"
+    //% weight=80
+    //% deprecated=true
+    export function loadCalibration(): void
+    {
+	for (let i=0; i<3; i++)
+            calibration[i] = rdEEROM(i);
+    }
+
+    /**
+      * Save Calibration data to EEROM
+      */
+    //% blockId="saveCalibration"
+    //% block="Save calibration to EEROM"
+    //% weight=70
+    //% deprecated=true
+    export function saveCalibration(): void
+    {
+	for (let i=0; i<3; i++)
+            wrEEROM(calibration[i],i);
+    }
+
+    /**
+      * Check Calibration Values for given speed
+      * @param speed selected speed 0 to 100. eg: 60
+      * @param side selected motor Left or Right
+      */
+    //% blockId="checkCalibration"
+    //% block="Check side%side bias for speed%speed"
+    //% weight=60
+    //% deprecated=true
+    export function checkCalibration(side: BBMotor, speed: number): number
+    {
+        let calibVal = 0;
+        leftCalib = 0;
+        rightCalib = 0;
+        if (speed < 60)
+            calibVal = calibration[1] - ((60 - speed)/30) * (calibration[1] - calibration[0]);
+        else
+            calibVal = calibration[2] - ((90 - speed)/30) * (calibration[2] - calibration[1]);
+        if (calibVal < 0)
+            leftCalib = Math.abs(calibVal);
+        else
+            rightCalib = calibVal;
+        if (side == BBMotor.Left)
+            return leftCalib;
+        else
+            return rightCalib;
+    }
+
 // New Style Motor Blocks
     // slow PWM frequency for slower speeds to improve torque
     function setPWM(speed: number): void
@@ -371,8 +512,6 @@ namespace bitbot
     //% speed.min=0 speed.max=100
     //% weight=100
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function go(direction: BBDirection, speed: number): void
     {
         move(BBMotor.Both, direction, speed);
@@ -388,8 +527,6 @@ namespace bitbot
     //% speed.min=0 speed.max=100
     //% weight=90
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function goms(direction: BBDirection, speed: number, milliseconds: number): void
     {
         go(direction, speed);
@@ -406,8 +543,6 @@ namespace bitbot
     //% speed.min=0 speed.max=100
     //% weight=80
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function rotate(direction: BBRobotDirection, speed: number): void
     {
         if (direction == BBRobotDirection.Left)
@@ -432,8 +567,6 @@ namespace bitbot
     //% speed.min=0 speed.max=100
     //% weight=70
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function rotatems(direction: BBRobotDirection, speed: number, milliseconds: number): void
     {
         rotate(direction, speed);
@@ -448,8 +581,6 @@ namespace bitbot
     //% blockId="BBstop" block="stop with%mode"
     //% weight=60
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function stop(mode: BBStopMode): void
     {
         getModel();
@@ -462,6 +593,24 @@ namespace bitbot
         pins.digitalWritePin(rMotorD1, stopMode);
     }
 
+    function createCalib(speed: number): void
+    {
+        if (getVersionCode() == 5)
+        {        
+            let calibVal = 0;
+            if (speed < 60)
+                calibVal = calibration[1] - ((60 - speed)/30) * (calibration[1] - calibration[0]);
+            else
+                calibVal = calibration[2] - ((90 - speed)/30) * (calibration[2] - calibration[1]);
+            leftCalib = 0;
+            rightCalib = 0;
+            if (calibVal < 0)
+                leftCalib = Math.abs(calibVal);
+            else
+                rightCalib = calibVal;
+        }
+    }
+
     /**
       * Move individual motors forward or reverse
       * @param motor motor to drive
@@ -472,15 +621,25 @@ namespace bitbot
     //% weight=50
     //% speed.min=0 speed.max=100
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function move(motor: BBMotor, direction: BBDirection, speed: number): void
     {
+        let lSpeed = 0;
+        let rSpeed = 0;
         getModel();
-        speed = clamp(speed, 0, 100) * 10.23;
+        speed = clamp(speed, 0, 100);
+	createCalib(speed); // sets bias values for "DriveStraight" if available (versionCode == 5 only)
+        speed = speed * 10.23
         setPWM(speed);
-        let lSpeed = Math.round(speed * (100 - leftBias) / 100);
-        let rSpeed = Math.round(speed * (100 - rightBias) / 100);
+        if (getVersionCode() == 5 && leftBias == 0 && rightBias == 0)
+        {
+            lSpeed = Math.round(speed * (100 - leftCalib) / 100);
+            rSpeed = Math.round(speed * (100 - rightCalib) / 100);
+        }
+        else
+        {
+            lSpeed = Math.round(speed * (100 - leftBias) / 100);
+            rSpeed = Math.round(speed * (100 - rightBias) / 100);
+        }
         if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
         {
             if (direction == BBDirection.Forward)
@@ -518,8 +677,6 @@ namespace bitbot
     //% bias.min=0 bias.max=80
     //% weight=40
     //% subcategory=Motors
-    //% group="New style blocks"
-    //% blockGap=8
     export function BBBias(direction: BBRobotDirection, bias: number): void
     {
         bias = clamp(bias, 0, 80);
@@ -535,141 +692,6 @@ namespace bitbot
         }
     }
 
-// Old Motor Blocks - kept for compatibility
-    /**
-      * Drive motor(s) forward or reverse.
-      * @param motor motor to drive.
-      * @param speed speed of motor (-1023 to 1023). eg: 600
-      */
-    //% blockId="bitbot_motor" block="drive%motor|motor(s) at speed%speed"
-    //% speed.min=-1023 speed.max=1023
-    //% weight=80
-    //% subcategory=Motors
-    //% group="Old style blocks"
-    //% blockGap=8
-    export function motor(motor: BBMotor, speed: number): void
-    {
-        speed = clamp(speed, -1023, 1023);
-        let speed0 = 0;
-        let speed1 = 0;
-        setPWM(Math.abs(speed));
-        if (speed > 0)
-        {
-            speed0 = speed;
-            speed1 = 0;
-        }
-        else
-        {
-            speed0 = 0;
-            speed1 = 0 - speed;
-        }
-        if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
-        {
-            if (getModel() == BBModel.Classic)
-            {
-                pins.analogWritePin(AnalogPin.P0, speed0);
-                pins.analogWritePin(AnalogPin.P8, speed1);
-            }
-            else
-            {
-                pins.analogWritePin(AnalogPin.P16, speed0);
-                pins.analogWritePin(AnalogPin.P8, speed1);
-            }
-        }
-
-        if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
-        {
-            if (getModel() == BBModel.Classic)
-            {
-                pins.analogWritePin(AnalogPin.P1, speed0);
-                pins.analogWritePin(AnalogPin.P12, speed1);
-            }
-            else
-            {
-                pins.analogWritePin(AnalogPin.P14, speed0);
-                pins.analogWritePin(AnalogPin.P12, speed1);
-            }
-        }
-    }
-
-    /**
-      * Drive robot forward (or backward) at speed.
-      * @param speed speed of motor between -1023 and 1023. eg: 600
-      */
-    //% blockId="bitbot_motor_forward" block="drive at speed%speed"
-    //% speed.min=-1023 speed.max=1023
-    //% weight=100
-    //% subcategory=Motors
-    //% group="Old style blocks"
-    //% blockGap=8
-    export function drive(speed: number): void
-    {
-        motor(BBMotor.Both, speed);
-    }
-
-    /**
-      * Drive robot forward (or backward) at speed for milliseconds.
-      * @param speed speed of motor between -1023 and 1023. eg: 600
-      * @param milliseconds duration in milliseconds to drive forward for, then stop. eg: 400
-      */
-    //% blockId="bitbot_motor_forward_milliseconds" block="drive at speed%speed| for%milliseconds|ms"
-    //% speed.min=-1023 speed.max=1023
-    //% weight=95
-    //% subcategory=Motors
-    //% group="Old style blocks"
-    //% blockGap=8
-    export function driveMilliseconds(speed: number, milliseconds: number): void
-    {
-        drive(speed);
-        basic.pause(milliseconds);
-        stop(BBStopMode.Coast);
-    }
-
-    /**
-      * Turn robot in direction at speed.
-      * @param direction direction to turn.
-      * @param speed speed of motor between 0 and 1023. eg: 600
-      */
-    //% blockId="bitbot_turn" block="spin%direction|at speed%speed"
-    //% speed.min=0 speed.max=1023
-    //% weight=90
-    //% subcategory=Motors
-    //% group="Old style blocks"
-    //% blockGap=8
-    export function driveTurn(direction: BBRobotDirection, speed: number): void
-    {
-        if (speed < 0)
-            speed = 0;
-        if (direction == BBRobotDirection.Left)
-        {
-            motor(BBMotor.Left, -speed);
-            motor(BBMotor.Right, speed);
-        }
-        else if (direction == BBRobotDirection.Right)
-        {
-            motor(BBMotor.Left, speed);
-            motor(BBMotor.Right, -speed);
-        }
-    }
-
-    /**
-      * Spin robot in direction at speed for milliseconds.
-      * @param direction direction to turn.
-      * @param speed speed of motor between 0 and 1023. eg: 600
-      * @param milliseconds duration in milliseconds to turn for, then stop. eg: 400
-      */
-    //% blockId="bitbot_turn_milliseconds" block="spin%direction|at speed%speed| fo %milliseconds|ms"
-    //% speed.min=0 speed.max=1023
-    //% weight=85
-    //% subcategory=Motors
-    //% group="Old style blocks"
-    //% blockGap=8
-    export function driveTurnMilliseconds(direction: BBRobotDirection, speed: number, milliseconds: number): void
-    {
-        driveTurn(direction, speed)
-        basic.pause(milliseconds)
-        stop(BBStopMode.Coast);
-    }
 
 // Inbuilt FireLed Blocks
 
@@ -894,7 +916,7 @@ namespace bitbot
         // send pulse
         let trig = DigitalPin.P15;
         let echo = DigitalPin.P15;
-        let maxCmDistance = 500;
+        let maxDistance = 2000*37; // 2m
         let d=10;
         pins.setPull(trig, PinPullMode.PullNone);
         for (let x=0; x<10; x++)
@@ -905,14 +927,14 @@ namespace bitbot
             control.waitMicros(10);
             pins.digitalWritePin(trig, 0);
             // read pulse
-            d = pins.pulseIn(echo, PulseValue.High, maxCmDistance * 58);
+            d = pins.pulseIn(echo, PulseValue.High, maxDistance);
             if (d>0)
                 break;
         }
         switch (unit)
         {
-            case BBPingUnit.Centimeters: return Math.round(d / 58);
-            case BBPingUnit.Inches: return Math.round(d / 148);
+            case BBPingUnit.Centimeters: return Math.round(d / 37);
+            case BBPingUnit.Inches: return Math.round(d / 94);
             default: return d;
         }
     }
