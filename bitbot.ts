@@ -403,7 +403,7 @@ namespace bitbot
             i2cData[1] = address & 0xff;	// address LSB
             i2cData[2] = data & 0xff;
             pins.i2cWriteBuffer(EEROM, i2cData, false);
-            basic.pause(1);			// needs a short pause. << 1ms ok?
+            basic.pause(3);			// needs a short pause. 3ms ok?
         }
     }
 
@@ -420,7 +420,7 @@ namespace bitbot
         return rdEEROM(address);
     }
 
-    // Uses bottom 3 bytes of EEROM for servo offsets. No user access
+    // Uses bottom 3 bytes of EEROM for motor calibration. No user access
     function rdEEROM(address: number): number
     {
         if (getVersionCode() == 5)
