@@ -692,6 +692,147 @@ namespace bitbot
         }
     }
 
+// Old Motor Blocks - kept for compatibility
+    /**
+      * Drive motor(s) forward or reverse.
+      * @param motor motor to drive.
+      * @param speed speed of motor (-1023 to 1023). eg: 600
+      */
+    //% blockId="bitbot_motor" block="drive%motor|motor(s) at speed%speed"
+    //% speed.min=-1023 speed.max=1023
+    //% weight=80
+    //% subcategory=Motors
+    //% group="Old style blocks"
+    //% blockGap=8
+    //% deprecated=true
+    export function motor(motor: BBMotor, speed: number): void
+    {
+        speed = clamp(speed, -1023, 1023);
+        let speed0 = 0;
+        let speed1 = 0;
+        setPWM(Math.abs(speed));
+        if (speed > 0)
+        {
+            speed0 = speed;
+            speed1 = 0;
+        }
+        else
+        {
+            speed0 = 0;
+            speed1 = 0 - speed;
+        }
+        if ((motor == BBMotor.Left) || (motor == BBMotor.Both))
+        {
+            if (getModel() == BBModel.Classic)
+            {
+                pins.analogWritePin(AnalogPin.P0, speed0);
+                pins.analogWritePin(AnalogPin.P8, speed1);
+            }
+            else
+            {
+                pins.analogWritePin(AnalogPin.P16, speed0);
+                pins.analogWritePin(AnalogPin.P8, speed1);
+            }
+        }
+
+        if ((motor == BBMotor.Right) || (motor == BBMotor.Both))
+        {
+            if (getModel() == BBModel.Classic)
+            {
+                pins.analogWritePin(AnalogPin.P1, speed0);
+                pins.analogWritePin(AnalogPin.P12, speed1);
+            }
+            else
+            {
+                pins.analogWritePin(AnalogPin.P14, speed0);
+                pins.analogWritePin(AnalogPin.P12, speed1);
+            }
+        }
+    }
+
+    /**
+      * Drive robot forward (or backward) at speed.
+      * @param speed speed of motor between -1023 and 1023. eg: 600
+      */
+    //% blockId="bitbot_motor_forward" block="drive at speed%speed"
+    //% speed.min=-1023 speed.max=1023
+    //% weight=100
+    //% subcategory=Motors
+    //% group="Old style blocks"
+    //% blockGap=8
+    //% deprecated=true
+    export function drive(speed: number): void
+    {
+        motor(BBMotor.Both, speed);
+    }
+
+    /**
+      * Drive robot forward (or backward) at speed for milliseconds.
+      * @param speed speed of motor between -1023 and 1023. eg: 600
+      * @param milliseconds duration in milliseconds to drive forward for, then stop. eg: 400
+      */
+    //% blockId="bitbot_motor_forward_milliseconds" block="drive at speed%speed| for%milliseconds|ms"
+    //% speed.min=-1023 speed.max=1023
+    //% weight=95
+    //% subcategory=Motors
+    //% group="Old style blocks"
+    //% blockGap=8
+    //% deprecated=true
+    export function driveMilliseconds(speed: number, milliseconds: number): void
+    {
+        drive(speed);
+        basic.pause(milliseconds);
+        stop(BBStopMode.Coast);
+    }
+
+    /**
+      * Turn robot in direction at speed.
+      * @param direction direction to turn.
+      * @param speed speed of motor between 0 and 1023. eg: 600
+      */
+    //% blockId="bitbot_turn" block="spin%direction|at speed%speed"
+    //% speed.min=0 speed.max=1023
+    //% weight=90
+    //% subcategory=Motors
+    //% group="Old style blocks"
+    //% blockGap=8
+    //% deprecated=true
+    export function driveTurn(direction: BBRobotDirection, speed: number): void
+    {
+        if (speed < 0)
+            speed = 0;
+        if (direction == BBRobotDirection.Left)
+        {
+            motor(BBMotor.Left, -speed);
+            motor(BBMotor.Right, speed);
+        }
+        else if (direction == BBRobotDirection.Right)
+        {
+            motor(BBMotor.Left, speed);
+            motor(BBMotor.Right, -speed);
+        }
+    }
+
+    /**
+      * Spin robot in direction at speed for milliseconds.
+      * @param direction direction to turn.
+      * @param speed speed of motor between 0 and 1023. eg: 600
+      * @param milliseconds duration in milliseconds to turn for, then stop. eg: 400
+      */
+    //% blockId="bitbot_turn_milliseconds" block="spin%direction|at speed%speed| fo %milliseconds|ms"
+    //% speed.min=0 speed.max=1023
+    //% weight=85
+    //% subcategory=Motors
+    //% group="Old style blocks"
+    //% blockGap=8
+    //% deprecated=true
+    export function driveTurnMilliseconds(direction: BBRobotDirection, speed: number, milliseconds: number): void
+    {
+        driveTurn(direction, speed)
+        basic.pause(milliseconds)
+        stop(BBStopMode.Coast);
+    }
+
 
 // Inbuilt FireLed Blocks
 
