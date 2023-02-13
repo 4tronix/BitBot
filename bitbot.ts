@@ -244,6 +244,7 @@ namespace bitbot
     let calibration: number[] = [0, 0, 0];
     let leftCalib = 0;
     let rightCalib = 0;
+    let calibLoaded = false;
 
     let _model = BBModel.Auto;
     let i2caddr = 28;	// i2c address of I/O Expander
@@ -448,6 +449,7 @@ namespace bitbot
     {
 	for (let i=0; i<3; i++)
             calibration[i] = rdEEROM(i);
+        calibLoaded = true;
     }
 
     /**
@@ -598,6 +600,8 @@ namespace bitbot
         if (getVersionCode() == 5)
         {        
             let calibVal = 0;
+            if(calibLoaded == false)
+                loadCalibration();
             if (speed < 60)
                 calibVal = calibration[1] - ((60 - speed)/30) * (calibration[1] - calibration[0]);
             else
