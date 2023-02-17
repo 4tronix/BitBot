@@ -1078,8 +1078,8 @@ namespace bitbot
         }
         switch (unit)
         {
-            case BBPingUnit.Centimeters: return Math.round(d / 37);
-            case BBPingUnit.Inches: return Math.round(d / 94);
+            case BBPingUnit.Centimeters: return Math.round(d / 59);
+            case BBPingUnit.Inches: return Math.round(d / 145);
             default: return d;
         }
     }
