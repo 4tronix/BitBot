@@ -1,11 +1,11 @@
 {
     "name": "BitBot",
-    "version": "1.5.5",
+    "version": "1.5.6",
     "description": "MakeCode package for 4tronix BitBot & BitBotXL robots",
     "license": "MIT",
     "dependencies": {
         "core": "*",
-        "fireled": "github:4tronix/FireLedsBase#0.1.4",
+        "fireled": "github:4tronix/FireLedsBase#1.2.0",
         "firescreen": "github:4tronix/FireScreen#0.0.5"
     },
     "files": [

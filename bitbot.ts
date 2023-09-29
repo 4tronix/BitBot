@@ -1061,7 +1061,7 @@ namespace bitbot
         // send pulse
         let trig = DigitalPin.P15;
         let echo = DigitalPin.P15;
-        let maxDistance = 2000*37; // 2m
+        let maxDistance = 2000*59; // 2m
         let d=10;
         pins.setPull(trig, PinPullMode.PullNone);
         for (let x=0; x<10; x++)
