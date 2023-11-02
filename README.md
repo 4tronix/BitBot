@@ -1,7 +1,6 @@
 # MakeCode Package for 4tronix BitBot Robot
 
-This library provides a Microsoft Makecode package for 4tronix BitBot and BitBot XL, see
-https://4tronix.co.uk/bitbot/
+This library provides a Microsoft Makecode package for [4tronix BitBot and BitBot XL](https://shop.4tronix.co.uk/products/bitbotxl.html)
 
 
 ## Selecting the Model of BitBot
@@ -14,10 +13,6 @@ bitbot.select_model(BBModel.Classic)
 bitbot.select_model(BBModel.XL)
 ```
 
-```sig
-makerbit.sendIrDatagram("0x00FF02FD");
-```
-
 Or you can leave the BitBot to automatically decide and not use this command at all. It will do this at the start of the program so it requires the BitBot to be switched on
 to make the correct selection. If you do it automatically then you can use the same hex code for both models.
 You can check what model is being used by:
@@ -25,33 +20,52 @@ You can check what model is being used by:
 ```block
 bitbot.getModel()
 ```
+
 ## Driving the robot    
 The simplest way to drive the robot is by using the `go(...)` or `goms(...)` blocks.
 With each of these blocks you specify Forward or Reverse, and a speed from 0 to 100.
 Both motors will be driven at the selected speed and direction.
 
-```block
-// Move forward at speed 60 forever
-bitbot.go(BBDirection.Forward, 60)
+Move forward at speed 60 forever:
 
-// Move backward at speed 100 for 2000 ms
+```block
+bitbot.go(BBDirection.Forward, 60)
+```
+
+Move backward at speed 100 for 2000 ms:
+
+```block
 bitbot.goms(BBDirection.Reverse, 100, 2000)
 ```
-You can also spin/rotate the robot with the `rotate(...)` or `rotatems(...)` blocks
-```blocks
-// Rotate left at speed 70
-bitbot.rotate(BBRobotDirection.Left, 70)
 
-// Rotate right at speed 50 for 400ms
+You can also spin/rotate the robot with the `rotate(...)` or `rotatems(...)` blocks
+
+Rotate left at speed 70:
+
+```block
+bitbot.rotate(BBRobotDirection.Left, 70)
+```
+
+Rotate right at speed 50 for 400ms:
+
+```block
 bitbot.rotatems(BBRobotDirection.Right, 50, 400)
 ```   
 
 ## Stopping
 When the motor speed is set to zero then it stops. However, we can also use the motor itself to create a reverse generated current to brake much quicker.
 This helps when aiming for more accurate manoeuvres. Use the `stop(...)` command to stop with braking, or coast to a halt.
-```blocks
-bitbot.stop(BBStopMode.Coast) # slowly coast to a stop
-bitbot.stop(BBStopMode.Brake) # rapidly brake
+
+Slowly coast to a stop:
+
+```block
+bitbot.stop(BBStopMode.Coast)
+```
+
+Rapidly brake:
+
+```block
+bitbot.stop(BBStopMode.Brake) // rapidly brake
 ```
 
 ## Driving the motors individually
@@ -59,19 +73,27 @@ bitbot.stop(BBStopMode.Brake) # rapidly brake
 If you want more fine grain control of individal motors, use `bitbot.move(...)` to drive each motor either forward or reverse.
 You can specify the direction (Forward or Reverse) and speed between 0 and 100.
 If the left motor turns slower than the right motor, the robot will turn to the left
-```blocks
-// Drive both motors forward at speed 60. Equivalent to bitbot.go(BBDirection.Forward, 60)
+
+Drive both motors forward at speed 60. Equivalent to bitbot.go(BBDirection.Forward, 60):
+
+```block
 bitbot.move(BBMotor.Both, BBDirection.Forward, 60)
+```
 
-// Drive left motor in reverse at speed 30
+Drive left motor in reverse at speed 30:
+
+```block
 bitbot.move(BBMotor.Left, BBDirection.Reverse, 30)
+```
 
-// Drive forward in a leftward curve
+Drive forward in a leftward curve:
+
+```blocks
 bitbot.move(BBMotor.Left, BBDirection.Forward, 40)
 bitbot.move(BBMotor.Right, BBDirection.Forward, 70)
 ```
 
-## Making the Robot Drive Straight
+## Making the Robot Drive Straight (BitBot XL Only)
 
 The small DC motors used in the BitBot and many other small robots are not guaranteed to go at the same speed as each other.
 This can cause the robot to veer off the straight line, either to left or to right, even when both motors are programmed to go
@@ -83,11 +105,15 @@ It varies with speed and battery condition etc, but an approximation is that a 1
 change of course over about 2m (6 feet).
 Note that the bias setting does not affect the old style motor blocks.
 
-```blocks
-// eg. robot leaves straight line to the right by about 10cm over 2m, so bias it to the left by 5%
-bitbot.BBBias(BBRobotDirection.Left, 5)
+eg. robot leaves straight line to the right by about 10cm over 2m, so bias it to the left by 5%:
 
-// eg. robot leaves straight line to left by 25cm, so bias it to the right by 15%
+```block
+bitbot.BBBias(BBRobotDirection.Left, 5)
+```
+
+eg. robot leaves straight line to left by 25cm, so bias it to the right by 15%:
+
+```block
 bitbot.BBBias(BBRobotDirection.Right, 15)
 ```
 
@@ -96,11 +122,12 @@ bitbot.BBBias(BBRobotDirection.Right, 15)
 To use the buzzer, just use `bitbot.buzz(..)` function with either `1`
 (sound) or `0` (no-sound).
 
+Buzz for 100 ms:
+
 ```blocks
-// Buzz for 100 ms
-bitbot.buzz(1);
+bitbot.buzz(true);
 basic.pause(100);
-bitbot.buzz(0);
+bitbot.buzz(false);
 ```
 
 ## Read line sensor
@@ -108,8 +135,9 @@ bitbot.buzz(0);
 The BitBot has two line-sensors: left and right. To read the value of the
 sensors, use `bitbot.readLine(..)` function.
 
+Read left and right line sensor:
+
 ```blocks
-// Read left and right line sensor
 let left = bitbot.readLine(BBLineSensor.Left);
 let right = bitbot.readLine(BBLineSensor.Right);
 ```
@@ -118,8 +146,9 @@ let right = bitbot.readLine(BBLineSensor.Right);
 
 Light sensors can be read using `bitbot.readLight(..)` function.
 
+Read left and right light sensor:
+
 ```blocks
-// Read left and right light sensor
 let left = bitbot.readLight(BBLightSensor.Left);
 let right = bitbot.readLight(BBLightSensor.Right);
 ```
@@ -129,11 +158,22 @@ let right = bitbot.readLight(BBLightSensor.Right);
 If you have mounted the optional sonar sensor for the BitBot you can
 also use the `bitbot.sonar(..)` function to read the distance to obstacles.
 
-```blocks
-// Read sonar values
-let v1 = bitbot.sonar(BBPingUnit.MicroSeconds);
-let v2 = bitbot.sonar(BBPingUnit.Centimeters);
-let v3 = bitbot.sonar(BBPingUnit.Inches);
+Read sonar value in cm:
+
+```block
+let distance = bitbot.sonar(BBPingUnit.MicroSeconds)
+```
+
+Read sonar value in ccentimetres:
+
+```block
+let distance = bitbot.sonar(BBPingUnit.Centimeters)
+```
+
+Read sonar value in inches:
+
+```block
+let distance = bitbot.sonar(BBPingUnit.Inches)
 ```
 
 ## FireLed Functions
@@ -143,26 +183,46 @@ By default, the FireLeds are automatically updated after every setting. This mak
 However, it can slow down some effects so there is a block provided to switch the update mode to
 Manual or Automatic:
 
-```blocks
-// Set all FireLeds to Green (hard-coded RGB color)
+Set all FireLeds to Green (hard-coded RGB color):
+
+```block
 bitbot.setLedColor(0x00FF00)
-// Set all FireLeds to Green (built-in colour selection)
+```
+
+Set all FireLeds to Green (built-in colour selection):
+
+```block
 bitbot.setLedColor(BBColors.Green)
+```
 
-// Clear all leds
+Clear all leds:
+
+```block
 bitbot.ledClear()
+```
 
-// Set the FireLed at position 0 to 11 to selected colour.
-// eg. set Fireled 3 to Red
+Set the FireLed at position 0 to 11 to selected colour.
+eg. set Fireled 3 to Red:
+
+```block
 bitbot.setPixelColor(3, 0xff0000)
+```
 
-// Set all the FireLeds to Rainbow (uses the colour wheel from Red to Purple)
+Set all the FireLeds to Rainbow (uses the colour wheel from Red to Purple):
+
+```block
 bitbot.ledRainbow()
+```
 
-// Shift FireLeds up one place, blanking the first FireLed
+Shift FireLeds up one place, blanking the first FireLed:
+
+```block
 bitbot.ledShift()
+```
 
-// Rotate FireLeds by shifting up one and replace the first with the last
+Rotate FireLeds by shifting up one and replace the first with the last:
+
+```block
 bitbot.ledRotate()
 ```
 
@@ -170,19 +230,27 @@ There are some more advanced blocks that allow you to select colours using separ
 and select the brightness of the FireLeds.
 The brightness is set to 40 by default, but can go as high as 255
 You should be careful not to look directly at them when they are bright as they can damage eyes.
-```blocks
-// Switch FireLeds Update Mode to Manual or Automatic
-bitbot.setUpdateMode(BBMode.Manual);
-bitbot.setUpdateMode(BBMode.Auto);
 
-// Select colour from separate Red, Green and Blue values
-// Each of the Red, Green and Blue values can range from 0 to 255.
-// This example produces a pale blue colour
-let myColour = bitbot.convertRGB(50, 100, 200);
+Switch FireLeds Update Mode to Manual or Automatic:
 
-// Set brightness of FireLeds to 100
+```block
+bitbot.setUpdateMode(BBMode.Manual)
+```
+
+Select colour from separate Red, Green and Blue values
+Each of the Red, Green and Blue values can range from 0 to 255.
+This example produces a pale blue colour:
+
+```block
+bitbot.convertRGB(50, 100, 200);
+```
+
+Set brightness of FireLeds to 100:
+
+```block
 bitbot.ledBrightness(100);
 ```
+
 ## Supported targets
 
 * for PXT/microbit
