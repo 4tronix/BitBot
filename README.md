@@ -7,6 +7,7 @@ https://4tronix.co.uk/bitbot/
 ## Selecting the Model of BitBot
 You can now use either a classic BitBot or a BitBot XL. The pins used for motors and sensors are different
 so it is necessary to select the correct model. You can force the selection using:
+
 ```blocks
 bitbot.select_model(BBModel.Auto);
 bitbot.select_model(BBModel.Classic)
@@ -15,6 +16,7 @@ bitbot.select_model(BBModel.XL)
 Or you can leave the BitBot to automatically decide and not use this command at all. It will do this at the start of the program so it requires the BitBot to be switched on
 to make the correct selection. If you do it automatically then you can use the same hex code for both models.
 You can check what model is being used by:
+
 ```blocks
 basic.showNumber(bitbot.getModel());
 ```
