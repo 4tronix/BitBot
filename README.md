@@ -8,23 +8,29 @@ https://4tronix.co.uk/bitbot/
 You can now use either a classic BitBot or a BitBot XL. The pins used for motors and sensors are different
 so it is necessary to select the correct model. You can force the selection using:
 
-```blocks
+```sig
 bitbot.select_model(BBModel.Auto);
 bitbot.select_model(BBModel.Classic)
 bitbot.select_model(BBModel.XL)
 ```
+
+```sig
+makerbit.sendIrDatagram("0x00FF02FD");
+```
+
 Or you can leave the BitBot to automatically decide and not use this command at all. It will do this at the start of the program so it requires the BitBot to be switched on
 to make the correct selection. If you do it automatically then you can use the same hex code for both models.
 You can check what model is being used by:
 
-```blocks
-basic.showNumber(bitbot.getModel());
+```block
+bitbot.getModel()
 ```
 ## Driving the robot    
 The simplest way to drive the robot is by using the `go(...)` or `goms(...)` blocks.
 With each of these blocks you specify Forward or Reverse, and a speed from 0 to 100.
 Both motors will be driven at the selected speed and direction.
-```blocks
+
+```block
 // Move forward at speed 60 forever
 bitbot.go(BBDirection.Forward, 60)
 
