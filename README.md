@@ -164,7 +164,7 @@ Read sonar value in cm:
 let distance = bitbot.sonar(BBPingUnit.MicroSeconds)
 ```
 
-Read sonar value in ccentimetres:
+Read sonar value in centimetres:
 
 ```block
 let distance = bitbot.sonar(BBPingUnit.Centimeters)
