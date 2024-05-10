@@ -1,7 +1,7 @@
 {
     "name": "BitBot",
-    "version": "2.1.1",
-    "description": "MakeCode package for 4tronix BitBot & BitBotXL robots",
+    "version": "2.1.2",
+    "description": "MakeCode package for 4tronix BitBot PRO, BitBot XL & BitBot robots",
     "license": "MIT",
     "dependencies": {
         "core": "*",

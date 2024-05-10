@@ -107,6 +107,7 @@ Conversely, if your robot is turning to the left, then set the bias to the right
 It varies with speed and battery condition etc, but an approximation is that a 10% bias will result in about 15cm (6 inches)
 change of course over about 2m (6 feet).
 Note that the bias setting does not affect the old style motor blocks.
+Set the bias values in the Start block at the very beginning of the program, before starting to use the normal commands
 
 eg. robot leaves straight line to the right by about 10cm over 2m, so bias it to the left by 5%:
 
