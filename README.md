@@ -1,11 +1,11 @@
 # MakeCode Package for 4tronix BitBot Robot
 
-This library provides a Microsoft Makecode package for [4tronix BitBot and BitBot XL](https://shop.4tronix.co.uk/products/bitbotxl.html)
+This library provides a Microsoft Makecode package for [4tronix BitBot, BitBot XL and BitBot PRO](https://shop.4tronix.co.uk/products/bitbotpro.html)
 
 
 ## Selecting the Model of BitBot
-You can now use either a classic BitBot or a BitBot XL. The pins used for motors and sensors are different
-so it is necessary to select the correct model. You can force the selection using:
+You can now use a classic BitBot or a BitBot XL or a BitBot PRO. The pins used for motors and sensors are different
+so it is necessary to select the correct model. This will be done automatically. Or, you can force the selection using:
 
 ```sig
 bitbot.select_model(BBModel.Auto);
@@ -13,13 +13,16 @@ bitbot.select_model(BBModel.Classic)
 bitbot.select_model(BBModel.XL)
 ```
 
-Or you can leave the BitBot to automatically decide and not use this command at all. It will do this at the start of the program so it requires the BitBot to be switched on
-to make the correct selection. If you do it automatically then you can use the same hex code for both models.
+In almost all cases, you can leave the BitBot to automatically decide and not use this command at all. It will do this at the start of the program so it requires the BitBot to be switched on
+to make the correct selection. If you do it automatically then you can use the same hex code for all models.
 You can check what model is being used by:
 
 ```block
 bitbot.getModel()
 ```
+
+## BitBot PRO
+These commands described below are the standard blocks for BitBot and BitBot XL. The [new blocks specifically for BitBot PRO are described here](https://4tronix.co.uk/bitbotpro)
 
 ## Driving the robot    
 The simplest way to drive the robot is by using the `go(...)` or `goms(...)` blocks.
