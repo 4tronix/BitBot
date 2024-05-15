@@ -1204,7 +1204,7 @@ namespace bitbot
     {
         let enPid = enable ? 1 : 0
 	if(isPRO())
-	    pidEnable = true
+	    pidEnable = enable
 	    // sendCommand2(PIDENABLE, enPid)
     }
 
