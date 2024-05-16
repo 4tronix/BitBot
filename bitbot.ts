@@ -362,6 +362,16 @@ enum BBirNoAny
     Go=56
 }
 
+/**
+  * Volume settings for Buzzer
+  */
+enum BBBuzzVolume
+{
+  Off=0,
+  Quiet=130,
+  Medium=160,
+  Loud=200
+}
 
 /**
  * Custom blocks
@@ -1388,14 +1398,14 @@ namespace bitbot
 	}
     }
 
-// Power Management Block
+// General Blocks that don't quite fit anywhere else
     /**
       * Read the battery voltage
       */
     //% blockId="BBBattery" block="battery voltage"
     //% weight=100
     //% subcategory="BitBot PRO"
-    //% group="Power"
+    //% group="General"
     export function batteryVoltage(): number
     {
 	if(isPRO())
@@ -1405,6 +1415,24 @@ namespace bitbot
 	}
 	else
 	    return 0
+    }
+
+    /**
+      * Set the buzzer volume
+      */
+    //% blockId="BBVolume"
+    //% block="set buzzer volume%volume"
+    //% weight=90
+    //% subcategory="BitBot PRO"
+    //% group="General"
+    export function setVolume(volume: BBBuzzVolume): void
+    {
+	if(isPRO())
+	{
+	    music.setVolume(volume)
+	    if(control.hardwareVersion() == '1')
+		music.stopAllSounds()
+	}
     }
 
 
@@ -1863,7 +1891,7 @@ namespace bitbot
 // Built-in Sensors - Inputs and Outputs
 
     /**
-      * Sound a buzz.
+      * Turn On/Off buzzer
       * @param flag state of buzzer (On or Off)
       */
     //% blockId="bitbot_buzz" block="turn buzzer%flag"
@@ -1884,6 +1912,20 @@ namespace bitbot
 	    else
 		music.stopAllSounds()
 	}
+    }
+
+    /**
+      * Sound buzzer for selected time
+      * @param duration time for buzzer to sound in ms eg: 400
+      */
+    //% blockId="bitbot_sound" block="sound buzzer for%duration|ms"
+    //% weight=95
+    //% subcategory="Inputs & Outputs"
+    export function buzzTime(duration: number): void
+    {
+        buzz(true)
+	basic.pause(duration)
+	buzz(false)
     }
 
     /**
