@@ -437,9 +437,23 @@ namespace bitbot
     const RPULSEL     = 23
     const RPULSEH     = 24
 
-    const cGO	= 1
-    const cSTOP	= 2
-    const cSPIN = 3
+// Motor Command Tracking
+    const cGO      = 1
+    const cSTOP    = 2
+    const cSPIN    = 3
+    const cDIRECT  = 4
+    const cGOCM    = 5
+    const cSPINDEG = 6
+    const cARC     = 7
+    const cARCDEG  = 8
+    const cSTEER   = 9
+
+    let lastCommand = cSTOP
+    let lastDirection = BBDirection.Forward
+    let lastSDirection = BBRobotDirection.Right
+    let lastSpeed = 0
+    let lastRadius = 0
+/////
 
     let btDisabled = true;
     let matrix5: fireled.Band;
@@ -475,10 +489,6 @@ namespace bitbot
     let _p2Trim = 0;
     let pidEnable = true
     let pidActive = false
-    let lastCommand = cSTOP
-    let lastDirection = BBDirection.Forward
-    let lastSDirection = BBRobotDirection.Right
-    let lastSpeed = 0
 
 
     let i2cData2 = pins.createBuffer(2);
@@ -856,15 +866,19 @@ namespace bitbot
     {
 	if(isPRO() && pidEnable)
 	{
-	    pidActive = true
 	    if(lastCommand!=cGO || lastDirection!=direction || lastSpeed!=speed)
+	    {
+		if((getVersionCode() == 26) && pidActive)
+		    stop(BBStopMode.Coast)
 		sendCommand2(DRIVE, (direction == BBDirection.Reverse) ? -speed : speed);
-	    lastCommand = cGO
+	    }
+	    pidActive = true
 	    lastDirection = direction
 	    lastSpeed = speed
 	}
 	else
             move(BBMotor.Both, direction, speed);
+        lastCommand = cGO
     }
 
     /**
@@ -897,10 +911,13 @@ namespace bitbot
     {
 	if(isPRO() && pidEnable)
 	{
-	    pidActive = true
 	    if(lastCommand!=cSPIN || lastSDirection!=direction || lastSpeed!=speed)
+	    {
+		if((getVersionCode() == 26) && pidActive)
+		    stop(BBStopMode.Coast)
 		sendCommand2(SPIN, (direction == BBRobotDirection.Right) ? -speed : speed)
-	    lastCommand = cSPIN
+	    }
+	    pidActive = true
 	    lastSDirection = direction
 	    lastSpeed = speed
 	}
@@ -917,6 +934,7 @@ namespace bitbot
                 move(BBMotor.Right, BBDirection.Reverse, speed);
             }
 	}
+        lastCommand = cSPIN
     }
 
     /**
@@ -955,7 +973,6 @@ namespace bitbot
 	    if((getVersionCode() == 26)	&& pidActive)	// First firmware release has bug in stop function that misses next command
 		gocm(BBDirection.Forward, 100, 1)	// this command is ignored
 	    pidActive = false
-	    lastCommand = cSTOP
 	}
 	else
 	{
@@ -964,6 +981,7 @@ namespace bitbot
             pins.digitalWritePin(rMotorD0, stopMode);
             pins.digitalWritePin(rMotorD1, stopMode);
 	}
+        lastCommand = cSTOP
     }
 
     function createCalib(speed: number): void
@@ -1006,6 +1024,7 @@ namespace bitbot
 	if(isPRO())
 	{
 	    sendCommand4(DIRECTMODE, speed, direction, motor); // for compatabilty only, no PIDC control
+	    pidActive = false
 	}
 	else
 	{
@@ -1048,6 +1067,7 @@ namespace bitbot
                 }
             }
 	}
+        lastCommand = cDIRECT
     }
 
     /**
@@ -1109,6 +1129,7 @@ namespace bitbot
 	    // wait for function complete
 	    waitForAck();
 	}
+        lastCommand = cGOCM
     }
 
     /**
@@ -1135,6 +1156,7 @@ namespace bitbot
 	    // wait for function complete
 	    waitForAck();
 	}
+        lastCommand = cSPINDEG
     }
 
     /**
@@ -1151,7 +1173,19 @@ namespace bitbot
     export function arc(direction: BBDirection, speed: number, radius: number): void
     {
 	if(isPRO())
-	    sendCommand4(ARC, (direction == BBDirection.Reverse) ? -speed : speed, radius & 0xff, radius >> 8);
+	{
+	    if(lastCommand!=cARC || lastDirection!=direction || lastSpeed!=speed || lastRadius!=radius)
+	    {
+	        if((getVersionCode() == 26) && pidActive)
+		    stop(BBStopMode.Coast)
+	        sendCommand4(ARC, (direction == BBDirection.Reverse) ? -speed : speed, radius & 0xff, radius >> 8)
+	    }
+	}
+	lastDirection = direction
+	lastSpeed = speed
+	lastRadius = radius
+        lastCommand = cARC
+        pidActive = true
     }
 
     /**
@@ -1175,6 +1209,7 @@ namespace bitbot
 	    // wait for function complete
 	    waitForAck();
 	}
+        lastCommand = cARCDEG
     }
 
     /**
@@ -1199,6 +1234,7 @@ namespace bitbot
 	    sendCommand4(DIRECTMODE, speedL, 0, 0)
 	    sendCommand4(DIRECTMODE, speedR, 0, 1)
 	}
+        lastCommand = cSTEER
     }
 
     /**
