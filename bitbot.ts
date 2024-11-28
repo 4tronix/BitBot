@@ -927,6 +927,7 @@ namespace bitbot
     //% subcategory=Motors
     export function go(direction: BBDirection, speed: number): void
     {
+        speed = clamp(speed, 0, 100)
 	if(isPRO() && pidEnable)
 	{
 	    if(lastCommand!=cGO || lastDirection!=direction || lastSpeed!=speed)
@@ -972,6 +973,7 @@ namespace bitbot
     //% subcategory=Motors
     export function rotate(direction: BBRobotDirection, speed: number): void
     {
+        speed = clamp(speed, 0, 100)
 	if(isPRO() && pidEnable)
 	{
 	    if(lastCommand!=cSPIN || lastSDirection!=direction || lastSpeed!=speed)
@@ -1206,6 +1208,7 @@ namespace bitbot
     //% group=Motors
     export function gocm(direction: BBDirection, speed: number, distance: number): void
     {
+        speed = clamp(speed, -100, 100)
 	if(isPRO() && !pidActive)
 	{
 	    if(distance < 0)
@@ -1235,6 +1238,7 @@ namespace bitbot
     //% group=Motors
     export function spinDeg(direction: BBRobotDirection, speed: number, angle: number): void
     {
+        speed = clamp(speed, -100, 100)
 	if(isPRO() && !pidActive)
 	{
 	    if(angle < 0)
@@ -1264,6 +1268,7 @@ namespace bitbot
     //% group=Motors
     export function arc(direction: BBArcDirection, speed: number, radius: number): void
     {
+        speed = clamp(speed, -100, 100)
 	if(isPRO() && !pidActive)
 	{
 	    radius = Math.max(radius, 7)
@@ -1309,6 +1314,7 @@ namespace bitbot
     //% group=Motors
     export function arcdeg(direction: BBArcDirection, speed: number, radius: number, angle: number): void
     {
+        speed = clamp(speed, 0, 100)
 	if(isPRO() && !pidActive)
 	{
 	    radius = Math.max(radius, 7)
@@ -1336,6 +1342,7 @@ namespace bitbot
     //% group=Motors
     export function steer(direction: number, speed: number): void
     {
+        speed = clamp(speed, 0, 100)
 	if(isPRO())
 	{
 	    direction = clamp(direction, -100, 100)
