@@ -227,6 +227,6 @@
   "{id:subcategory}FireLeds": "Lys",
   "{id:subcategory}Inputs & Outputs": "Sensorer og styring",
   "{id:subcategory}Motors": "Kjøring",
-  "{id:group}New style blocks": "Kjøring med fart fra 0-100",
+  "{id:group}New style blocks": "Kjøring med fart fra 0-100"
 }
 
