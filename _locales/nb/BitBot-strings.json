@@ -118,7 +118,7 @@
   "bitbot.getFirmwareCode|block": "BitBot PRO firmware-versjon",
   "bitbot.getModel|block": "BitBot-modell",	
   "bitbot.getVersionCode|block": "versjonskode",
-  "bitbot.gocm|block": kjør%direction|med fart%speed|\\% i%distance|cm",
+  "bitbot.gocm|block": "kjør%direction|med fart%speed|\\% i%distance|cm",
   "bitbot.goms|block": "kjør %direction|med fart %speed|\\% i %milliseconds|millisekund",
   "bitbot.go|block": "kjør %direction|med fart %speed|\\%",
   "bitbot.irKeyAddon|block": "tilleggs-IR nøkkel%key|ble trykket",
@@ -226,8 +226,7 @@
   "{id:subcategory}BitBot_Model": "BitBot-modell",
   "{id:subcategory}FireLeds": "Lys",
   "{id:subcategory}Inputs & Outputs": "Sensorer og styring",
-  "{id:subcategory}Motors": "Kjøring"
+  "{id:subcategory}Motors": "Kjøring",
   "{id:group}New style blocks": "Kjøring med fart fra 0-100",
-
 }
 
