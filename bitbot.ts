@@ -1318,6 +1318,16 @@ namespace bitbot
 	if(isPRO() && !pidActive)
 	{
 	    radius = Math.max(radius, 7)
+	    // if(getFirmwareCode() == 11) // v11 firmware incorrectly limits max speed, so do it here for all versions
+	    {
+		let spdMin = (30 * radius)/(radius - 5.38)	// 30 is minimum speed before clamping, 5.38 is half width between wheels
+		let spdMax = (100 * radius)/(radius + 5.38)
+		speed = clamp(speed, spdMin, spdMax)
+	    }
+
+	    // fudge the angle to correct for speed and radius variances
+	    angle = angle * (1.0 + (speed-20)/(Math.max(radius/35.0, 1.0) * 1000.0))
+
 	    let aSpeed = ((direction == BBArcDirection.ReverseLeft) || (direction == BBArcDirection.ReverseRight)) ? -speed : speed
 	    let aAngle = ((direction == BBArcDirection.ForwardRight) || (direction == BBArcDirection.ReverseRight)) ? -angle : angle
 	    sendCommand6(ARCANGLE, aSpeed, radius & 0xff, radius >> 8, aAngle & 0xff, aAngle >>8)
