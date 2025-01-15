@@ -702,6 +702,7 @@ namespace bitbot
 	{
 	    getCode()
 	    sendCommand2(PIDENABLE, 1)  // first access to BitBot PRO, so ensure PID loop is enabled
+	    sendCommand3(STARTPWM, 35, 18)	// set m+start PWM values to lowest sensible. NB pwmMax is always doubled before use
 	}
 	return versionCode
     }
@@ -1243,7 +1244,7 @@ namespace bitbot
 	{
 	    if(angle < 0)
 	    {
-		angle = -angle
+		angle = -angle + 2	// Always seems to lose a couple of degrees at the start. Slipping?
 		speed = -speed
 	    }
 	    sendCommand4(SPINANGLE, (direction == BBRobotDirection.Right) ? -speed : speed, angle & 0xff, angle >> 8)
@@ -1318,7 +1319,7 @@ namespace bitbot
 	if(isPRO() && !pidActive)
 	{
 	    radius = Math.max(radius, 7)
-	    // if(getFirmwareCode() == 11) // v11 firmware incorrectly limits max speed, so do it here for all versions
+	    // if(getFirmwareCode() == 11) // v11 firmware incorrectly limited max speed, so do it here for all versions
 	    {
 		let spdMin = (30 * radius)/(radius - 5.38)	// 30 is minimum speed before clamping, 5.38 is half width between wheels
 		let spdMax = (100 * radius)/(radius + 5.38)
@@ -1326,7 +1327,7 @@ namespace bitbot
 	    }
 
 	    // fudge the angle to correct for speed and radius variances
-	    angle = angle * (1.0 + (speed-20)/(Math.max(radius/35.0, 1.0) * 1000.0))
+	    //angle = angle * (1.0 + (speed-20)/(Math.max(radius/35.0, 1.0) * 1000.0))
 
 	    let aSpeed = ((direction == BBArcDirection.ReverseLeft) || (direction == BBArcDirection.ReverseRight)) ? -speed : speed
 	    let aAngle = ((direction == BBArcDirection.ForwardRight) || (direction == BBArcDirection.ReverseRight)) ? -angle : angle
@@ -1578,6 +1579,7 @@ namespace bitbot
     //% weight=50
     //% subcategory="BitBot PRO"
     //% group=Advanced
+    //% deprecated=true
     export function setStartPWM(pwmMin: number, pwmMax: number): void
     {
 	if(isPRO())
